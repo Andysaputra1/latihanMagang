@@ -4,9 +4,18 @@ const session = require("express-session");
 const path = require('path');
 const configuration = require("./app/modules/configuration")
 const passport = require("./app/modules/passport");
+const helmet = require('helmet')
+
+
+
 require('dotenv').config();
 
 const c_main = require('./app/controllers/controller_main');
+
+app.use(helmet({
+    contentSecurityPolicy: false, // Matikan CSP sebentar agar script inline di EJS tetap jalan
+    crossOriginEmbedderPolicy: false
+}));
 
 // Session
 app.use(session({

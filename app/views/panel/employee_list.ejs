@@ -271,24 +271,34 @@
         }
 
         // Modal Edit
-        function openModalEdit(id) {
+        window.openModalEdit = function(id) {
+            console.log("Membuka Edit ID:", id);
             $.ajax({
                 url: '/panel/employee/api/detail',
                 method: 'POST',
                 data: { employee_id: id },
                 success: function(response) {
-                    if(response.status == 'SUCCESS') {
+                    if(response.status == 'SUCCESS' && response.data) {
                         var data = response.data;
+                        
                         $('#modalTitle').text('Edit Karyawan');
                         $('#formEmployee').attr('action', '/panel/employee/edit');
+                        
+                        // Mengisi value form
                         $('#inp_employee_id').val(data.employee_id);
                         $('#inp_name').val(data.employee_name);
                         $('#inp_gender').val(data.employee_gender);
-                        $('#inp_birthday').val(data.input_birthday_format);
+                        $('#inp_birthday').val(data.input_birthday_format); // Format YYYY-MM-DD
                         $('#inp_phone').val(data.employee_phone);
+                        
                         $('#note_foto').show();
                         $('#modalEmployee').modal('show');
+                    } else {
+                        alert("Data tidak ditemukan!");
                     }
+                },
+                error: function() {
+                    alert("Gagal menyambung ke server. Coba login ulang.");
                 }
             });
         }

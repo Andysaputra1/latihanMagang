@@ -139,6 +139,6 @@ router.use('/log_management', c_log_management);
 
 router.use('/dashboard', c_dashboard);
 router.use('/company', c_company); 
-router.use('/employee',  c_employee);
+router.use('/employee', c_employee);
 
 module.exports = router;

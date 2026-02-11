@@ -6,7 +6,7 @@ const c_dashboard = require('./controller_dashboard');
 const c_user_management = require('./controller_user_management');
 const c_custom_menu = require('./controller_custom_menu');
 const c_log_management = require('./controller_log_management');
-
+const c_company = require('./controller_company');
 /***
  * Controller for display login view
  */
@@ -135,4 +135,8 @@ router.use('/custom_menu', c_custom_menu);
 router.use('/log', c_log_management);
 router.use('/log_management', c_log_management);
 
+
+router.use('/dashboard', c_dashboard);
+router.use('/company', c_company); 
+router.use('/user', c_user_management);
 module.exports = router;

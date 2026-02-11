@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en" style="height:100%">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="shortcut icon" href="/image/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+        <link rel="stylesheet" href="/css/style_system.css">
+        <title><%= title %></title>
+    </head>
+    <body>
+        <nav class="shadow-sm">
+            <img src="/image/polytron_logo_red.svg" alt="">
+        </nav>
+        <div class="container body-content">
+            <div class="app-name-title">
+                <h2><%= app_settings.app_name %></h3>
+            </div>
+            <div class="row card app-content-properties">
+                <div class="col-lg-6 app-content-container">
+                    <h5 class="app-content-properties-title"><i class="fa-solid fa-desktop" style="margin-right: 8px;"></i> App Settings</h5>
+                    <div class="app-content-properties-content">
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">App Name</p> 
+                            <span class="col-sm-8"><%= app_settings.app_name %></span>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">App Image</p>
+                            <span class="col-sm-8"><%= app_settings.app_image %></span>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">App Version</p>
+                            <span class="col-sm-8"><%= app_settings.app_version %></span>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">App Env</p>
+                            <span class="col-sm-8"><%= app_settings.app_env %></span>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">App Port</p>
+                            <span class="col-sm-8"><%= app_settings.app_port %></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 app-content-container">
+                    <h5 class="app-content-properties-title"><i class="fa-solid fa-server" style="margin-right: 8px;"></i> Database Settings</h5>
+                    <div class="app-content-properties-content">
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">DB Host</p> 
+                            <span class="col-sm-8"><%= db_settings.db_host %></span>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">DB User</p>
+                            <span class="col-sm-8"><%= db_settings.db_user %></span>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">DB Name</p>
+                            <span class="col-sm-8"><%= db_settings.db_name %></span>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">DB Status</p>
+                            <% if (db_settings.db_status == 'Connected') { %>
+                                <span class="col-sm-8 text-success"><%= db_settings.db_status %></span>
+                            <% } else { %>
+                                <span class="col-sm-8 text-danger"><%= db_settings.db_status %></span>
+                            <% } %>
+                        </div>
+                        <div class="row app-factor-group">
+                            <p class="col-sm-4">DB Timezone</p>
+                            <span class="col-sm-8 db-timezone"><%= db_settings.db_timezone %></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="/js/jquery-3.7.1.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/fontawesome/js/all.min.js"></script>
+</html>

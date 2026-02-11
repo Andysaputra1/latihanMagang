@@ -1,0 +1,24 @@
+<%- include('../partial/panel/header') %>
+<body class="footer-fixed">
+    <%- include('../partial/panel/navbar') %>
+    <%- include('../partial/panel/sidebar') %>
+    <div class="container-fluid body-content">
+        <section class="content dashboard">
+            <div class="page-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading user-management-heading">
+                        <h2 style="display: flex; align-items: center; white-space: nowrap">Dashboard</h2>                        
+                    </div>
+                    <div class="panel-body">
+                        <div class="content" style="display: flex; align-items: center;justify-content: center;">
+                            <h1 style="font-weight: 400;"><%=greeting%>, <%=user.name%></h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/panel/footer') %>
+    <%- include('../partial/panel/javascript') %>
+</body>
+

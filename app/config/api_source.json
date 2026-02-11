@@ -1,0 +1,17 @@
+[
+    {
+        "URL_API_REGION" : "https://data.fira.id/api/api_region/"
+    },
+    {
+        "GET_PROVINCE" : "getProvince"
+    },
+    {
+        "GET_REGENCY" : "getRegency"
+    },
+    {
+        "GET_DISTRICT" : "getDistrict"
+    },
+    {
+        "GET_VILLAGE" : "getVillage"
+    }
+]

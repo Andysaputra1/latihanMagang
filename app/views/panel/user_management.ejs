@@ -1,0 +1,505 @@
+<%- include('../partial/panel/header') %>
+<body class="footer-fixed">
+    <%- include('../partial/panel/navbar') %>
+    <%- include('../partial/panel/sidebar') %>
+    <%- include('./modal/user_management/add') %>
+    <%- include('./modal/user_management/edit') %>
+    <%- include('./modal/user_management/delete') %>
+    <div class="container-fluid body-content">
+        <section class="content dashboard">
+            <div class="page-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading user-management-heading">
+                        <h2 style="display: flex; align-items: center; white-space: nowrap">Daftar User</h2>
+                        <button type="button" class="btn btn-primary btn-add-table" data-bs-toggle="modal"
+                        data-bs-target="#modal_panel_user_add" style="white-space: nowrap;">Tambah User <i
+                        class="fas fa-plus"></i></button>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table" id="dataTable" width="100%" cellspacing="0">
+                        <div class="table-class">
+                            <div class="table-responsive">
+                                <table id="data_table" class="table" style="width:100%; overflow-x: auto;">
+                                    <thead>
+                                        <tr>
+                                            <th style="white-space: nowrap;" width="5%">No.</th>
+                                            <th style="white-space: nowrap;" width="25%">NIK</th>
+                                            <th style="white-space: nowrap;" width="45%">Nama</th>
+                                            <th style="white-space: nowrap;" width="20%">Peran</th>
+                                            <th style="white-space: nowrap;" width="5%">&nbsp;</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/panel/footer') %>
+    <%- include('../partial/panel/javascript') %>
+</body>
+
+<script>
+function posting(data) {
+    $.ajax({
+        method: "POST",
+        url: data.url,
+        data: data.param
+    }).done(data.done);
+}
+
+function resetModalAddUser() {
+    $("#employee-info-container").addClass("hidden");
+    $("#save_panel_user").addClass("hidden");
+    $("#panel_nik").val('');
+    $("#panel_user_nik").val('');
+    $("#panel_user_nik_result").val('');
+    $("#panel_user_name").val('');
+    $(".no-employee").removeClass("hidden");
+    $(".no-employee-found").addClass("hidden");
+    $(".employee").addClass("hidden");
+    $(".panel_role_container").addClass("hidden");
+    if ('<%= user.role_id %>' == 1) {
+        $("#role_1").prop("checked", true);
+    } else {
+        $("#role_2").prop("checked", true);
+    }
+    $("#error_box").css('display','none');
+}
+
+function getEditUser(id) {
+    posting({
+        url: "/panel/user_management/get_data_by_nik",
+        param: {
+            id: id
+        },
+        done: function (data) {
+            if (data.status == "SUCCESS") {
+                $("#edit_panel_user_nik").val(data.data[0].id);
+                $("#edit_panel_nik").val(data.data[0].id);
+                $("#edit_panel_user_name_data").val(data.data[0].username);
+                if (data.data[0].role_id == "2") {
+                    $('#edit_role_1').prop('checked', true);
+                } else {
+                    $('#edit_role_2').prop('checked', true);
+                }
+                $("#modal_panel_user_edit").modal("show");
+            } else {
+                showToastNotifications(data.status, data.message);
+            }
+        }
+    })
+}
+
+function getDeleteUser(id) {
+    posting({
+        url: "/panel/user_management/get_data_by_nik",
+        param: {
+            id: id
+        },
+        done: function (data) {
+            if (data.status == "SUCCESS") {
+                $("#delete_panel_nik").val(data.data[0].id);
+                $("#delete_panel_user_message").text(data.data[0].id);
+                $("#delete_panel_user_message_2").text(data.data[0].username);
+                $("#modal_panel_user_delete").modal("show");
+            } else {
+                showToastNotifications(data.status, data.message);
+            }
+        }
+    })
+}
+
+function showToastNotifications(status, notif){
+    if (status == "SUCCESS") {
+        bootoast.toast({
+            message: notif,
+            type: "success",
+            position: "top",
+            icon: 'fas fa-check-circle',
+            animationDuration: "100",
+            dismissable: false,
+            timeout: 2,
+        });
+    } else {
+        bootoast.toast({
+            message: notif,
+            type: "danger",
+            position: "top",
+            icon: "fas fa-times-circle",
+            animationDuration: "100",
+            dismissable: false,
+            timeout: 2,
+        });
+    }
+}
+
+$(document).ready(function () {
+    var roleUser = '<%= user.role %>';
+    var table = $('#data_table').DataTable({
+        language: {
+            searchPlaceholder: '',
+            paginate: {
+                'previous': '←',
+                'next': '→'
+            },
+            lengthMenu: 'Tampilkan _MENU_ user',
+            info: "Menampilkan _START_ - _END_ dari _TOTAL_",
+            infoEmpty: "Menampilkan 0 - 0 dari 0",
+            search: '<i class="fas fa-search"></i>',
+            emptyTable: "Data tidak ditemukan / Belum ada user yang didaftarkan",
+            zeroRecords: "Data yang dicari tidak ditemukan",
+        },
+        pagingType: "simple_numbers",
+        dom: 'lfrtip',
+        serverSide: true,
+        processing: true,
+        scrollX: true,
+        order: [[0, 'asc']],
+        ajax: {
+            url: "/panel/user_management/list_user",
+            data: {
+                role: roleUser
+            },
+            method: "POST"
+        },
+        columns: [
+            {
+                data: "role_id",
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row, meta) {
+                    return meta.row + meta.settings._iDisplayStart + 1 + ".";
+                }
+            },
+            {
+                data: "nik",
+                orderSequence: ["asc", "desc"],
+                render: function (data, type, row) {
+                    if (data && data != "") return data;
+                    else return "<i class='not-set'>Not set</i>"
+                }
+            },
+            {
+                data: "name",
+                orderSequence: ["asc", "desc"],
+                render: function (data, type, row) {
+                    if (data && data != "") return data;
+                    else return "<i class='not-set'>Not set</i>"
+                }
+            },
+            {
+                data: "role",
+                orderSequence: ["asc", "desc"],
+                render: function (data, type, row) {
+                    if (data && data != "") return data;
+                    else return "<i class='not-set'>Not set</i>"
+                }
+            },
+            {
+                data: "id",
+                orderable: false,
+                searchable: false,
+                render: function (data, type, row) {
+                    var button = "<div style='text-align: center; display: flex; gap: 0.5rem; align-items: center; justify-content: center;'>"
+                    if (roleUser != row.role_name) {
+                        if(roleUser == "Super Admin"){
+                            button +=
+                                ` <a class='table-btn update-btn' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit' onclick='getEditUser("${data}")'><i class='fas fa-pencil-alt'></i>`
+                        }
+                        button +=
+                            ` <a class='table-btn delete-btn' data-bs-toggle='tooltip' data-bs-placement='top' title='Hapus' onclick='getDeleteUser("${data}")'><i class='fas fa-trash-alt'></i>`
+                    } else {
+                        button +=
+                            `<b>-</b>`
+                    }
+                    button += "</div>";
+                    return button;
+                }
+            },
+        ],
+    });
+
+    $("#modal_panel_user_add").on("hidden.bs.modal", function () {
+        resetModalAddUser();
+    });
+
+    $("#modal_panel_user_edit").on("hidden.bs.modal", function () {
+        $("#edit_error_box").css('display','none');
+    });
+
+    $("#modal_panel_user_delete").on("hidden.bs.modal", function () {
+        $("#delete_error_box").css('display','none');
+    });
+
+    var search = document.getElementById("icon_search_nik");
+    var loading = document.getElementById("add_user_data");
+    $('#icon_search_nik').click(function () {
+        $('#panel_nik').val("");
+        $('#panel_nik').val($('#panel_user_nik').val());
+        $('#panel_user_nik').prop('disabled', true);
+        $('#panel_user_nik_data').text("");
+        $('#panel_user_nik_data').removeClass("reveal");
+        $('#panel_user_nik_data').addClass("skeleton-line");
+        $('#panel_user_name_data').text("");
+        $('#panel_user_name_data').removeClass("reveal");
+        $('#panel_user_name_data').addClass("skeleton-line");
+        $('#panel_user_email_data').text("");
+        $('#panel_user_email_data').removeClass("reveal");
+        $('#panel_user_email_data').addClass("skeleton-line");
+        $('#panel_user_ou_desc_data').text("");
+        $('#panel_user_ou_desc_data').removeClass("reveal");
+        $('#panel_user_ou_desc_data').addClass("skeleton-line");
+        $('#panel_user_job_title_desc_data').text("");
+        $('#panel_user_job_title_desc_data').removeClass("reveal");
+        $('#panel_user_job_title_desc_data').addClass("skeleton-line");
+        $('#panel_user_personal_sub_area_data').text("");
+        $('#panel_user_personal_sub_area_data').removeClass("reveal");
+        $('#panel_user_personal_sub_area_data').addClass("skeleton-line");
+        $('#panel_user_company_data').text("");
+        $('#panel_user_company_data').removeClass("reveal");
+        $('#panel_user_company_data').addClass("skeleton-line");
+        $('#panel_user_department_data').text("");
+        $('#panel_user_department_data').removeClass("reveal");
+        $('#panel_user_department_data').addClass("skeleton-line");
+        $("#error_box").css('display','none');
+        search.classList.add("hidden");
+        loading.classList.add("btn-loading");
+        get_user_data_nik();
+    })
+    $("#panel_user_nik").keypress(function(e) {
+        var keycode = (e.keyCode ? e.keyCode : e.which);
+        if(keycode == '13'){
+            $('#panel_nik').val("");
+            $('#panel_nik').val($('#panel_user_nik').val());
+            $('#panel_user_nik').prop('disabled', true);
+            $('#panel_user_nik_data').text("");
+            $('#panel_user_nik_data').removeClass("reveal");
+            $('#panel_user_nik_data').addClass("skeleton-line");
+            $('#panel_user_name_data').text("");
+            $('#panel_user_name_data').removeClass("reveal");
+            $('#panel_user_name_data').addClass("skeleton-line");
+            $('#panel_user_email_data').text("");
+            $('#panel_user_email_data').removeClass("reveal");
+            $('#panel_user_email_data').addClass("skeleton-line");
+            $('#panel_user_ou_desc_data').text("");
+            $('#panel_user_ou_desc_data').removeClass("reveal");
+            $('#panel_user_ou_desc_data').addClass("skeleton-line");
+            $('#panel_user_job_title_desc_data').text("");
+            $('#panel_user_job_title_desc_data').removeClass("reveal");
+            $('#panel_user_job_title_desc_data').addClass("skeleton-line");
+            $('#panel_user_personal_sub_area_data').text("");
+            $('#panel_user_personal_sub_area_data').removeClass("reveal");
+            $('#panel_user_personal_sub_area_data').addClass("skeleton-line");
+            $('#panel_user_company_data').text("");
+            $('#panel_user_company_data').removeClass("reveal");
+            $('#panel_user_company_data').addClass("skeleton-line");
+            $('#panel_user_department_data').text("");
+            $('#panel_user_department_data').removeClass("reveal");
+            $('#panel_user_department_data').addClass("skeleton-line");
+            $("#error_box").css('display','none');
+            search.classList.add("hidden");
+            loading.classList.add("btn-loading");
+            get_user_data_nik();
+        }
+    })
+    $("#panel_user_nik").submit(function(e) {
+        e.preventDefault();
+    });
+
+    function get_user_data_nik(){
+        var url = "/panel/user_management/get_nik_data"
+        posting({
+            url: url,
+            param: $("#panel_user_form_add").serialize(),
+            done: function (data) {
+                $('#panel_nik').val("");
+                $('#panel_user_nik').prop('disabled', false);
+                search.classList.remove("hidden");
+                loading.classList.remove("btn-loading");
+                if (data.status == "SUCCESS") {
+                    if (data.data.message.toLowerCase() == "success") {
+                        $("#employee-info-container").removeClass("hidden")
+                        $("#panel_user_nik_data").removeClass("skeleton-line");
+                        $("#panel_user_nik_data").addClass("reveal");
+                        document.getElementById("panel_user_nik_data").textContent =
+                            data.data.data.nik;
+                        $("#panel_user_nik_result").val(data.data.data.nik)
+                        $("#panel_user_name_data").removeClass("skeleton-line");
+                        $("#panel_user_name_data").addClass("reveal");
+                        document.getElementById("panel_user_name_data").textContent =
+                            data.data.data.name;
+                        $("#panel_user_name").val(data.data.data.name)
+                        $("#panel_user_email_data").removeClass("skeleton-line");
+                        $("#panel_user_email_data").addClass("reveal");
+                        document.getElementById("panel_user_email_data").textContent =
+                            data.data.data.email;
+                        $("#panel_user_email").val(data.data.data.email)
+                        $("#panel_user_ou_desc_data").removeClass("skeleton-line");
+                        $("#panel_user_ou_desc_data").addClass("reveal");
+                        document.getElementById("panel_user_ou_desc_data").textContent =
+                            data.data.data.ou_desc;
+                        $("#panel_user_job_title_desc_data").removeClass("skeleton-line");
+                        $("#panel_user_job_title_desc_data").addClass("reveal");
+                        document.getElementById("panel_user_job_title_desc_data")
+                            .textContent =
+                            data.data.data.job_title_desc;
+                        $("#panel_user_personal_sub_area_data").removeClass("skeleton-line");
+                        $("#panel_user_personal_sub_area_data").addClass("reveal");
+                        document.getElementById("panel_user_personal_sub_area_data")
+                            .textContent = data.data.data.personal_sub_area;
+                        $("#panel_user_company_data").removeClass("skeleton-line");
+                        $("#panel_user_company_data").addClass("reveal");
+                        document.getElementById("panel_user_company_data").textContent =
+                            data.data.data.company;
+                        $("#panel_user_department_data").removeClass("skeleton-line");
+                        $("#panel_user_department_data").addClass("reveal");
+                        document.getElementById("panel_user_department_data")
+                            .textContent =
+                            data.data.data.department;
+                        $("#employee-info-container").attr("hidden", false);
+                        $("#cancel_panel_user").removeClass("hidden");
+                        $("#save_panel_user").removeClass("hidden");
+                        $(".no-employee").addClass("hidden");
+                        $(".no-employee-found").addClass("hidden");
+                        $(".error-employee-found").addClass("hidden");
+                        $(".employee").removeClass("hidden");
+                        $(".panel_role_container").removeClass("hidden");
+                    } else {
+                        $("#employee-info-container").addClass("hidden");
+                        $("#panel_user_nik_result").val("");
+                        $("#panel_user_name").val("");
+                        $("#panel_user_email").val("");
+                        $("#employee-info-container").attr("hidden", true);
+                        $("#cancel_panel_user").addClass("hidden");
+                        $("#save_panel_user").addClass("hidden");
+                        $(".no-employee").addClass("hidden");
+                        if(data.error_code == 400) {
+                            $(".no-employee-found").addClass("hidden");
+                            $(".error-employee-found").html(data.message);
+                            $(".error-employee-found").removeClass("hidden");
+                        } else {
+                            $(".error-employee-found").addClass("hidden");
+                            $(".no-employee-found").removeClass("hidden");
+                        }
+                        $(".employee").addClass("hidden");
+                        $(".panel_role_container").addClass("hidden");
+                    }
+                } else {
+                    $("#employee-info-container").addClass("hidden");
+                    $("#panel_user_nik_result").val("");
+                    $("#panel_user_name").val("");
+                    $("#panel_user_email").val("");
+                    $("#employee-info-container").attr("hidden", true);
+                    $("#cancel_panel_user").addClass("hidden");
+                    $("#save_panel_user").addClass("hidden");
+                    $(".no-employee").addClass("hidden");
+                    if(data.error_code == 400) {
+                        $(".no-employee-found").addClass("hidden");
+                        $(".error-employee-found").html(data.message);
+                        $(".error-employee-found").removeClass("hidden");
+                    } else {
+                        $(".error-employee-found").addClass("hidden");
+                        $(".no-employee-found").removeClass("hidden");
+                    }
+                    $(".employee").addClass("hidden");
+                    $(".panel_role_container").addClass("hidden");
+                }
+            }
+        })
+    }
+
+    var loading2 = document.getElementById("add_panel_user");
+    $('#save_panel_user').click(function () {
+        $('#save_panel_user').prop('disabled', true);
+        loading2.classList.add("btn-loading");
+        addUser();
+    })
+    function addUser(){
+        $("#error_box").css('display','none')
+        posting({
+            url: "/panel/user_management/add",
+            param: $("#panel_user_form_add").serialize(),
+            done: function (data) {
+                if (data.status == "SUCCESS") {
+                    table.ajax.reload(function(){
+                        loading2.classList.remove("btn-loading");
+                        showToastNotifications(data.status, data.message);
+                        $('#modal_panel_user_add').modal('hide');
+                        $('#save_panel_user').prop('disabled', false);
+                    });
+                } else {
+                    loading2.classList.remove("btn-loading");
+                    $("#error_box").css('display','flex');
+                    $("#error_message").html(data.message);
+                    $('#save_panel_user').prop('disabled', false);
+                }
+            }
+        })
+    }
+
+    var loading3 = document.getElementById("update_panel_user");
+    $('#edit_panel_user').click(function () {
+        $('#edit_panel_user').prop('disabled', true);
+        loading3.classList.add("btn-loading");
+        updateUser();
+    })
+    function updateUser(){
+        $("#edit_error_box").css('display','none')
+        posting({
+            url: "/panel/user_management/edit",
+            param: $("#panel_user_form_edit").serialize(),
+            done: function (data) {
+                if (data.status == "SUCCESS") {
+                    table.ajax.reload(function(){
+                        loading3.classList.remove("btn-loading");
+                        showToastNotifications(data.status, data.message);
+                        $('#modal_panel_user_edit').modal('hide');
+                        $('#edit_panel_user').prop('disabled', false);
+                    });
+                } else {
+                    loading3.classList.remove("btn-loading");
+                    $("#edit_error_box").css('display','flex');
+                    $("#edit_error_message").html(data.message);
+                    $('#edit_panel_user').prop('disabled', false);
+                }
+            }
+        })
+    }
+
+    var loading4 = document.getElementById("del_panel_user");
+    $('#delete_panel_user').click(function () {
+        $('#delete_panel_user').prop('disabled', true);
+        loading4.classList.add("btn-loading");
+        deleteUser();
+    })
+    function deleteUser(){
+        $("#delete_error_box").css('display','none')
+        posting({
+            url: "/panel/user_management/delete",
+            param: $("#panel_user_form_delete").serialize(),
+            done: function (data) {
+                if (data.status == "SUCCESS") {
+                    table.ajax.reload(function(){
+                        loading4.classList.remove("btn-loading");
+                        showToastNotifications(data.status, data.message);
+                        $('#modal_panel_user_delete').modal('hide');
+                        $('#delete_panel_user').prop('disabled', false);
+                    });
+                } else {
+                    loading4.classList.remove("btn-loading");
+                    $("#delete_error_box").css('display','flex');
+                    $("#delete_error_message").html(data.message);
+                    $('#delete_panel_user').prop('disabled', false);
+                }
+            }
+        })
+    }
+});
+
+</script>

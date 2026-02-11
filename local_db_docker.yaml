@@ -1,0 +1,17 @@
+services:
+  db:
+    image: mysql:8.0.33
+    container_name: db_template
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234567890
+      TZ: Asia/Jakarta
+      MYSQL_USER: template_user
+      MYSQL_PASSWORD: template_1234567890
+      MYSQL_DATABASE: template_db
+    restart: unless-stopped
+    volumes:
+      - ./app/migrations:/docker-entrypoint-initdb.d
+    expose:
+      - 3306
+    ports:
+      - 3310:3306

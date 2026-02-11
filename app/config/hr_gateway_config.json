@@ -1,0 +1,10 @@
+{
+    "hr_gateway_api": [
+        {
+            "env": "development",
+            "url": "https://hrgateway.lasagna.fira.id/api/v1/hris/",
+            "token": "bZgAsHXdZPu4PPEkAQAEkaE6pZjBtDasdasdmqwi219nnadsux5a5nTBF9FxYE4ZUpQFAjmKkGsUjt"
+        }
+    ],
+    "hr_gateway_active_env": 0
+}

@@ -1,0 +1,26 @@
+<div class="modal fade" id="modal_panel_user_delete" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title pull-left" id="exampleModalLabel">Hapus User?</h2>
+            </div>
+            <form id="panel_user_form_delete">
+                <p>Apakah Anda yakin ingin menghapus user dengan NIK <span style="color: #ED1C24;" id="delete_panel_user_message"></span> atas nama <span style="color: #ED1C24;" id="delete_panel_user_message_2"></span>?</p>
+                <input type="hidden" name="delete_panel_nik" id="delete_panel_nik">
+            </form>
+            <div id="delete_error_box" class="error-box" style="display: none;">
+                <div style="display: flex;">
+                    <img src="/image/error-x.svg" alt="" style="margin-right:15px;">
+                </div>
+                <div>
+                    <p style="margin-top: auto;margin-bottom: auto; font-size: 11px; color: #ED1C24; font-weight: 500;" id="delete_error_message">Error</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" aria-label="Close" class="btn btn-primary btn-cancel-table">Batal</button>
+                <button type="button" id="delete_panel_user" class="btn btn-primary btn-add-table"><i id="del_panel_user" class="fas fa-circle-notch"></i>Hapus</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,13 @@
+{
+    "email_used": "0",
+    "email_api": [
+        {
+            "email_name": "development",
+            "email_properties": {
+                "email_url": "https://pes.onigiri.fira.id",
+                "email_username": "ldp",
+                "email_password": "94caa704ec96bf342fe34afe2da8a9925b825155ac4048b80dd57b194bebe626"
+            }
+        }
+    ]
+}

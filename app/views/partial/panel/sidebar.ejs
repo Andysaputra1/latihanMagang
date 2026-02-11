@@ -1,0 +1,43 @@
+<nav class="sidebar" id="sidebar">
+    <ul class="list-unstyled components">
+        <li class="<% if(sidebar == 'dashboard'){%>active<%} %>">
+            <a class="sidebar-item justify-center" href="/panel/dashboard">
+                <div class="sidebar-active <% if(sidebar == 'dashboard'){%>active<%} %>"></div>
+                <div class="container-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <span class="detail-sidebar">Dashboard</span>
+            </a>
+        </li>
+
+        <li class="<% if(sidebar == 'user'){%>active<%} %>">
+            <a class="sidebar-item justify-center" href="/panel/user">
+                <div class="sidebar-active <% if(sidebar == 'user'){%>active<%} %>"></div>
+                <div class="container-icon">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <span class="detail-sidebar">Manajemen User</span>
+            </a>
+        </li>
+
+        <li class="<% if(sidebar == 'custom_menu'){%>active<%} %>">
+            <a class="sidebar-item justify-center" href="/panel/custom_menu">
+                <div class="sidebar-active <% if(sidebar == 'custom_menu'){%>active<%} %>"></div>
+                <div class="container-icon">
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <span class="detail-sidebar">Custom Menu</span>
+            </a>
+        </li>
+
+        <li class="<% if(sidebar == 'log'){%>active<%} %>">
+            <a class="sidebar-item justify-center" href="/panel/log">
+                <div class="sidebar-active <% if(sidebar == 'log'){%>active<%} %>"></div>
+                <div class="container-icon">
+                    <i class="fa-solid fa-gears"></i>
+                </div>
+                <span class="detail-sidebar">Log</span>
+            </a>
+        </li>
+    </ul>
+</nav>

@@ -1,0 +1,102 @@
+<!--J-Query -->
+<script src="/js/jquery-3.7.1.min.js"></script>
+
+<!-- Bootstrap -->
+<script src="/js/bootstrap.bundle.min.js"></script>
+
+<!-- Moment With Locales -->
+<script src="/js/moment-with-locales.min.js"></script>
+
+<script>
+
+    function posting(data) {
+        $.ajax({
+            method: "POST",
+            url: data.url,
+            data: data.param
+        }).done(data.done);
+    }
+
+    $("body").keydown(function(e) {
+        var keycode = (e.keyCode ? e.keyCode : e.which);
+        if(keycode == '13'){
+            e.preventDefault();
+            if(!$("#login_btn").prop("disabled")){
+                $('#login_btn').click();
+            }
+        }
+    })
+    $("#login_panel").submit(function(e) {
+        e.preventDefault();
+    });
+
+    function showPassword() {
+        var x = document.getElementById("password_login");
+        if (x.type === "password") {
+            x.type = "text";
+            $("#icon_password").addClass("fa-eye");
+            $("#icon_password").removeClass("fa-eye-slash");
+        } else {
+            x.type = "password";
+            $("#icon_password").addClass("fa-eye-slash");
+            $("#icon_password").removeClass("fa-eye");
+        }
+    }
+
+    $('#username_login, #password_login').on('keydown', function(){
+        $('#error-box').attr('style', 'display: none;');
+    });
+
+    function login_verification() {
+        $("#loading_check").addClass("btn-loading");
+        $("#login_btn").prop("disabled", true);
+        var username = $("#username_login").val()
+        var password = $("#password_login").val()
+        if (username == "" || username == null) {
+            $("#loading_check").removeClass("btn-loading");
+            $("#error-box").css('display','flex')
+            $("#login_btn").removeAttr('disabled');
+            $("#error-message").html("NIK tidak boleh kosong!")
+            $("#error-info-mark").css('display','none')
+            return
+        } else if (password == "" || password == null) {
+            $("#loading_check").removeClass("btn-loading");
+            $("#error-box").css('display','flex')
+            $("#login_btn").removeAttr('disabled');
+            $("#error-message").html("Kata Sandi tidak boleh kosong!")
+            $("#error-info-mark").css('display','none')
+            return
+        } else {
+            $("#error-box").css('display','none')
+            $("#error-message").html("")
+            $('#error-info-mark').css('display','none')
+            $("#error-info-text").html("")
+            var data_input = {
+                username: username,
+                password: password
+            }
+            posting({
+                url: '/panel/auth/login/submit',
+                param: data_input,
+                done: function (data) {
+                    if (data.status == "SUCCESS") {
+                        $("#login_btn").off('click');
+                        window.location.href = "/panel/dashboard"
+                    } else {
+                        $("#loading_check").removeClass("btn-loading");
+                        $("#login_btn").removeAttr('disabled');
+                        $("#error-box").css('display','flex')
+                        $("#error-message").html(data.message[0])
+                        if (data.message[1] == null) {
+                            $("#error-info-mark").css('display','none')
+                            $("#error-info-text").html("")
+                        } else {
+                            $("#error-info-mark").css('display','block')
+                            $("#error-info-text").html(data.message[1])
+                        }
+                    }
+                }
+            })
+        }
+    }
+</script>

@@ -1,0 +1,5 @@
+:root {
+    /* Color for Error Box on Login*/
+    --error-text-color: #ED1C24;
+    --error-box-color: rgba(223, 0, 0, 0.35);
+}

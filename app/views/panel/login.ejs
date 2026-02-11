@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en" style="height: 100%;">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="shortcut icon" href="/image/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/css/style_parent_universal_variable.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/css/style_login_panel.css">
+    <link rel="stylesheet" href="/css/style_footer_panel.css">
+    <title><%= title %></title>
+</head>
+<body>
+    <div class="body-login-container">
+        <form class="panel-login" id="panel_login" name="panel_login">
+            <div class="login-container">
+                <div class="login-container-card">
+                    <div class="section-panel">
+                        <div class="panel-login">
+                            <div style="display: flex; align-items: center; justify-content: center; text-align: left; width: 100%; margin: auto; padding: 20px; margin-top: 20px;">
+                                <img src="/image/polytron_logo_red.svg" style="max-width: 40%; height: auto; margin-right: 10px;">
+                                <div style="margin: 0; font-size: 1em; color: #757171;">|</div>
+                                <div style="margin: 0; font-size: clamp(12px, 4.3vw, 26px); text-wrap: nowrap; color: #ED1C24;">&nbsp;<%= app_name %></div>
+                            </div>                                                    
+                            <div class="login-form-container-body">
+                                <form class="form-layer" id="login_panel">
+                                    <div class="input-group">
+                                        <div class="form-group">
+                                            <div class="input-form">
+                                                <input type="text" name="username_login" id="username_login" class="form-control input" placeholder=" ">
+                                                <label for="username_login" class="label">NIK</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-form">
+                                                <i class="far show-password-icon fa-eye-slash" id="icon_password" onclick="showPassword()"></i>
+                                                <input type="password" name="password_login" id="password_login" class="form-control input" placeholder=" ">
+                                                <label for="password_login" class="label">Kata Sandi</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="error-box" style="display: none;">
+                                        <div style="width: 90%;">
+                                            <p id="error-message">Error</p>
+                                        </div>
+                                        <div style="display: flex; width: 10%; justify-content: end;">
+                                            <i id="error-info-mark" class="fa-regular fa-circle-question">
+                                                <span id="error-info-text">
+                                                    Error
+                                                </span>
+                                            </i>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-primary button-modal" id="login_btn" type="button" onclick="login_verification()">Masuk <i id="loading_check" class="fas fa-circle-notch"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="ornament-container">
+                                <img src="/image/login_ornament.svg" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <span class="footer-information-login">
+            © <script>document.write(new Date().getFullYear())</script> 
+            Polytron v.<%= app_version %>
+        </span>
+    </footer>
+    <%- include('../partial/panel/javascript_login') %>
+</body>
+<script src="/js/prevention_breach.js"></script>
+</html>

@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Montserrat', sans-serif;}
+nav {
+    display: flex;
+    height: 64px;
+    align-items: center;}
+nav img {
+    height: 24px;
+    padding: 0 20px;
+    display: flex;}
+p {
+    margin: 0;}
+.body-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+    height: calc(100vh - 64px);}
+
+/* System */
+.app-name-title {
+    display: flex;
+    justify-content: center;}
+    .app-name-title h2 {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 700;}
+.app-content-properties{
+    display: flex;
+    background-color: #fdfdfd;
+    flex-direction: row;
+    justify-content: center;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);}
+.app-content-properties-title {
+    display: flex;
+    font-size: 1rem;
+    font-weight: 600;
+    font-style: oblique;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid darkgrey;}
+.app-factor-group{
+    display: flex;
+    padding: 0 20px;}
+    .app-factor-group p {
+        font-size: 1rem;
+        font-weight: 400;}
+    .app-factor-group span {
+        font-size: 1rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;}
+.app-content-properties-content{
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid darkgrey;}
+@media (max-width: 991.98px) {
+    .app-content-properties{
+        gap: 20px;}}
+
+/* 404 Page */
+.url-not-found-img-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 20px;}
+    .url-not-found-img-container img {
+        width: inherit;
+        max-width: 500px;}
+.url-not-found-text-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;}
+    .url-not-found-text-container h1 {
+        font-weight: 700;}
+    .url-not-found-text-container h5 {
+        font-weight: 400;}

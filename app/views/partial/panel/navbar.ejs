@@ -1,0 +1,69 @@
+<nav class="navbar fixed-top navbar-light shadow-sm" id="navbar">
+    <div class="section-left">
+        <div class="not-minimal-resolution">
+            <a id="sidebarCollapse" class="navbar-brand">
+                <!-- <div class="menu-button open" id="nav-icon1"> -->
+                <div class="menu-button" id="nav-icon1">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </a>
+            <!--
+            <a id="logo-poly" class="logoPolytron">
+                <img class="align-middle" src="/image/polytron_logo_red.svg" style="height: 20px"/>
+            </a>
+            -->
+            <div style="display: flex; align-items: center; justify-content: center; text-align: left; width: fit-content; margin: auto;">
+                <img src="/image/polytron_logo_red.svg" style="height: 20px; margin-right: 10px;">
+                <div style="margin: 0; font-size: 20px; color: #757171;">|</div>
+                <div style="margin: 0; font-size: 25px; color: #ED1C24;">&nbsp;<%= app_name %></div>
+            </div>
+        </div>
+        <a id="sidebarCollapse2" class="navbar-brand">
+            <svg class="align-middle" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path id="logo-poly-min" d="M6 5.76539V23.5L8.58749 21.8217C9.54964 21.2266 9.3968 20.5996 9.38818 19.6604V5.91161L14.3504 3.0157C15.1912 2.65842 15.8621 2.96069 16.2965 3.45396C16.6443 3.87252 16.7895 4.2335 16.7895 4.76226V9.73885C16.7782 11.026 16.3094 11.6905 15.2251 12.3665L13.7776 13.244C12.9492 13.7075 12.936 13.5761 12.9296 14.5624L12.9108 17.4811L18.7535 13.8856C19.6185 13.3487 19.9273 13.1491 20 12.2498L19.9806 5.36127C19.9656 4.4414 19.4822 4.14898 18.7586 3.708L14.3938 1.04811C13.3346 0.2367 12.5229 0.404395 11.6186 1.04204L7.44348 3.61201C6.10658 4.40414 6.09489 4.82132 6 5.76539Z" 
+                fill="black" class="<% if (user.role == "Member") { %> change-color <% } %>"/>
+            </svg>    
+        </a>
+    </div>
+    <div class="section-right">
+        <a class="dropdown-toggle toggler" id="acc-max" data-bs-toggle="dropdown">
+            <% if(user.role_id != 1) { %>
+                <div class="d-flex flex-column text-end">
+                    <span class="name-navbar"><%- user.nik %> - <%- user.name %></span>
+                    <span class="role-navbar"><%= user.role %></span>
+                </div>
+            <% } else { %>
+                <span class="name-navbar"><%- user.name %></span>
+            <% } %>
+        </a>
+        <a class="toggler2" id="acc-min" data-bs-toggle="dropdown">
+            <i class="fas fa-user-circle" style="color: #000000; font-size: 1.5rem;"></i>
+        </a>
+        <ul class="dropdown-menu">
+            <li class="header">
+                <div class="user">
+                    <% if(user.role_id != 1) { %>
+                        <div class="d-flex flex-column">
+                            <span><%- user.name %></span>
+                            <span style="font-weight: 500;"><%- user.nik %></span>
+                        </div>
+                        <div class="title"><%= user.role %></div>
+                    <% } else { %>
+                        <div class="d-flex flex-column">
+                            <span><%- user.name %></span>
+                        </div>
+                    <% } %>
+                </div>
+            </li>
+            <li class="footer">
+                <div class="row clearfix">
+                    <div class="col-lg-12">
+                        <a href="/panel/auth/logout" class="btn btn-default btn-sm btn-block">Log Out</a>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</nav>

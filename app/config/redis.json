@@ -1,0 +1,11 @@
+{
+    "REDIS_HOST": "localhost",
+    "REDIS_PORT": 6379,
+    "REDIS_PASSWORD": "",
+    "PROVINCE_DATA_LIST": "province_data_list",
+    "REGENCY_DATA_LIST": "regency_data_list",
+    "DISTRICT_DATA_LIST": "district_data_list",
+    "VILLAGE_DATA_LIST": "village_data_list",
+    "REDIS_EXPIRED": 3600
+}
+  

@@ -1,0 +1,134 @@
+<div class="modal fade" id="modal_panel_user_add" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title pull-left" id="exampleModalLabel">Tambah User</h2>
+                <button type="button" class="close button-icon" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="/image/close.svg" alt="">
+                </button>
+            </div>
+            <form id="panel_user_form_add">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <h6>NIK</h6>
+                        <div class="input-group" style="display: flex; flex-direction: column;">
+                            <input style="width: 100%; padding-right: 1.875rem;" type="number" class="form-control" id="panel_user_nik" name="panel_user_nik">
+                            <input type="number" class="form-control hidden" id="panel_nik" name="panel_nik" hidden>
+                            <div style="display: flex; justify-content: flex-end;">
+                                <i class="fas fa-circle-notch" id="add_user_data"></i>
+                                <i class="fas fa-search search-icon" id="icon_search_nik"></i>
+                            </div>
+                        </div>
+                        <p class="no-employee">Masukkan NIK lalu ENTER atau klik ikon cari untuk menemukan data karyawan.</p>
+                        <p class="no-employee-found hidden">Karyawan tidak ditemukan.</p>
+                        <p class="error-employee-found hidden"></p>
+                        <div id="employee-info-container" hidden>
+                            <h6 class="employee hidden" style="margin-bottom: 0.5rem;">Informasi Karyawan</h6>
+                            <input id="panel_user_nik_result" name="panel_user_nik_result" type="text" class="form-control hidden" hidden>
+                            <input id="panel_user_name" name="panel_user_name" type="text" class="form-control hidden" hidden>
+                            <input id="panel_user_email" name="panel_user_email" type="text" class="form-control hidden" hidden>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    NIK
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_nik_data">
+                                    def
+                                </div>
+                            </div>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    Nama
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_name_data">
+                                    def
+                                </div>
+                            </div>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    Email
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_email_data" style="word-wrap: break-word; overflow-wrap: break-word; word-break: break-word;">
+                                    def
+                                </div>
+                            </div>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    Unit Organisasi
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_ou_desc_data">
+                                    def
+                                </div>
+                            </div>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    Jabatan
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_job_title_desc_data">
+                                    def
+                                </div>
+                            </div>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    Sub Area Personal
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_personal_sub_area_data">
+                                    def
+                                </div>
+                            </div>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    Perusahaan
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_company_data" >
+                                    def
+                                </div>
+                            </div>
+                            <div class="row row-style">
+                                <p class="col-sm-4">
+                                    Departemen
+                                </p>
+                                <div class="col-sm-8 font-bold" id="panel_user_department_data">
+                                    def
+                                </div>
+                            </div>
+                        </div>
+                    </div>                    
+                </div>
+                <div style="margin-top: 1.25rem;" class="panel_role_container hidden">
+                    <div class="modal-body">
+                        <h6>Role</h6>
+                        <div style="display: flex; gap: 1rem;" id="panel_role_department_data">
+                            <% if (user.role_id == 1) { %>
+                                <div class="input-radio">
+                                    <input type="radio" id="role_1" name="panel_user_role" value="2" checked/>
+                                    <label for="role_1">Admin</label>
+                                </div>
+                                <div class="input-radio">
+                                    <input type="radio" id="role_2" name="panel_user_role" value="3"/>
+                                    <label for="role_2">Member</label>
+                                </div>
+                            <% } else { %>
+                                <div class="input-radio">
+                                    <input type="radio" id="role_2" name="panel_user_role" value="3" checked/>
+                                    <label for="role_2">Member</label>
+                                </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div id="error_box" class="error-box" style="display: none; margin-top: 1rem;">
+                        <div style="display: flex;">
+                            <img src="/image/error-x.svg" alt="" style="margin-right:15px;">
+                        </div>
+                        <div>
+                            <p style="margin-top: auto;margin-bottom: auto; font-size: 11px; color: #ED1C24; font-weight: 500;" id="error_message">Error</p>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="modal-footer">
+                <button type="button" id="save_panel_user" class="btn btn-primary btn-add-table hidden"><i id="add_panel_user" class="fas fa-circle-notch"></i>Tambah</button>
+            </div>
+        </div>
+    </div>
+</div>

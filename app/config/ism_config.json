@@ -1,0 +1,13 @@
+{
+    "ism_api": [
+        {
+            "env": "development",
+            "url": "http://lasagna.fira.id:1027/api",
+            "appname": "artemis",
+            "appkey": "uKSNKGvwYk38kDlHKaPUd90Mau0OXAfb",
+            "username": "insentif",
+            "password": "Insentif132"
+        }
+    ],
+    "ism_active_env": 0
+}

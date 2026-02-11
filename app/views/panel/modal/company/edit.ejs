@@ -1,0 +1,39 @@
+<div class="modal fade" id="modal_company_edit" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title pull-left">Edit Perusahaan</h2>
+                <button type="button" class="close button-icon" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="/image/close.svg" alt="Close">
+                </button>
+            </div>
+
+            <form action="/panel/company/edit/submit" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" id="edit_company_id" name="company_id">
+
+                    <div class="form-group mb-3">
+                        <h6>Nama Perusahaan <span class="text-danger">*</span></h6>
+                        <input type="text" class="form-control" id="edit_company_name" name="company_name" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <h6>Nomor Telepon</h6>
+                        <input type="text" class="form-control" id="edit_company_phone" name="company_phone">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <h6>Alamat Perusahaan</h6>
+                        <textarea class="form-control" id="edit_company_address" name="company_address" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-add-table">
+                        <i class="fas fa-save"></i> Simpan Perubahan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

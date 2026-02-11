@@ -1,0 +1,31 @@
+<div class="modal fade" id="modal_company_delete" data-bs-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title pull-left">Hapus Perusahaan</h2>
+                <button type="button" class="close button-icon" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="/image/close.svg" alt="Close">
+                </button>
+            </div>
+
+            <form id="form_delete_company" method="GET"> 
+                <div class="modal-body">
+                    <input type="hidden" id="delete_company_id" name="id">
+                    
+                    <div class="text-center my-3">
+                        <i class="fas fa-exclamation-triangle text-warning fa-3x mb-3"></i>
+                        <p>Apakah Anda yakin ingin menghapus perusahaan <br><strong id="delete_company_name"></strong>?</p>
+                        <p class="text-danger small">Data karyawan di dalamnya mungkin akan ikut terhapus atau error jika relasinya tidak diatur.</p>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-danger btn-add-table">
+                        <i class="fas fa-trash"></i> Ya, Hapus
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

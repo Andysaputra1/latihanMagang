@@ -1,0 +1,122 @@
+<%- include('../partial/panel/header') %>
+<body class="footer-fixed">
+    <%- include('../partial/panel/navbar') %>
+    <%- include('../partial/panel/sidebar') %>
+    
+    <%- include('./modal/company/add') %>
+    <%- include('./modal/company/edit') %>
+    <%- include('./modal/company/delete') %>
+
+    <div class="container-fluid body-content">
+        <section class="content dashboard">
+            <div class="page-body">
+                <div class="panel panel-default">
+                    <div class="panel-heading user-management-heading">
+                        <h2 style="display: flex; align-items: center; white-space: nowrap">Daftar Perusahaan</h2>
+                        
+                        <% if ([1, 2].includes(user.role_id)) { %>
+                        <button type="button" class="btn btn-primary btn-add-table" data-bs-toggle="modal"
+                            data-bs-target="#modal_company_add" style="white-space: nowrap;">Tambah Perusahaan <i
+                            class="fas fa-plus"></i></button>
+                        <% } %>
+                    </div>
+                    
+                    <div class="panel-body">
+                        <div class="table-class">
+                            <div class="table-responsive">
+                                <table id="data_table_company" class="table" style="width:100%; overflow-x: auto;">
+                                    <thead>
+                                        <tr>
+                                            <th style="white-space: nowrap;" width="5%">No.</th>
+                                            <th style="white-space: nowrap;" width="30%">Nama Perusahaan</th>
+                                            <th style="white-space: nowrap;" width="20%">Telepon</th>
+                                            <th style="white-space: nowrap;" width="35%">Alamat</th>
+                                            <th style="white-space: nowrap;" width="10%">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% data.forEach((item, index) => { %>
+                                            <tr>
+                                                <td><%= index + 1 %>.</td>
+                                                <td><strong><%= item.company_name %></strong></td>
+                                                <td><%= item.company_phone || '-' %></td>
+                                                <td><%= item.company_address || '-' %></td>
+                                                <td>
+                                                    <div style='text-align: center; display: flex; gap: 0.5rem; align-items: center; justify-content: center;'>
+                                                        <% if ([1, 2].includes(user.role_id)) { %>
+                                                            <a href="/panel/employee?company_id=<%= item.company_id %>" class='table-btn' style="color: #17a2b8;" data-bs-toggle="tooltip" title='Daftar Karyawan'><i class='fas fa-users'></i></a>
+                                                            
+                                                            <a class='table-btn update-btn' onclick='getEditCompany("<%= item.company_id %>", "<%= item.company_name %>", "<%= item.company_phone %>", "<%= item.company_address %>")' data-bs-toggle="tooltip" title='Edit'><i class='fas fa-pencil-alt'></i></a>
+                                                            
+                                                            <a class='table-btn delete-btn' onclick='getDeleteCompany("<%= item.company_id %>", "<%= item.company_name %>")' data-bs-toggle="tooltip" title='Hapus'><i class='fas fa-trash-alt'></i></a>
+                                                        <% } else { %>
+                                                            <span class="badge bg-secondary">View Only</span>
+                                                        <% } %>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        <% }) %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+    <%- include('../partial/panel/footer') %>
+    <%- include('../partial/panel/javascript') %>
+</body>
+
+<script>
+    $(document).ready(function () {
+        // 1. Inisialisasi DataTable (Desain Standar Polytron)
+        $('#data_table_company').DataTable({
+            language: {
+                searchPlaceholder: '',
+                paginate: { 'previous': '←', 'next': '→' },
+                lengthMenu: 'Tampilkan _MENU_ data',
+                info: "Menampilkan _START_ - _END_ dari _TOTAL_",
+                infoEmpty: "Menampilkan 0 - 0 dari 0",
+                search: '<i class="fas fa-search"></i>',
+                emptyTable: "Data tidak ditemukan",
+                zeroRecords: "Data yang dicari tidak ditemukan",
+            },
+            dom: 'lfrtip',
+            scrollX: true,
+            order: [[0, 'asc']]
+        });
+
+        // 2. Reset Modal Tambah saat ditutup
+        $("#modal_company_add").on("hidden.bs.modal", function () {
+            $(this).find('form').trigger('reset');
+        });
+    });
+
+    // 3. Fungsi Isi Data ke Modal Edit
+    window.getEditCompany = function(id, name, phone, address) {
+        // Pastikan ID input di file modal/company/edit.ejs sesuai dengan ini:
+        $("#edit_company_id").val(id);
+        $("#edit_company_name").val(name);
+        $("#edit_company_phone").val(phone);
+        $("#edit_company_address").val(address);
+        
+        // Tampilkan Modal
+        $("#modal_company_edit").modal("show");
+    };
+
+    // 4. Fungsi Isi Data ke Modal Delete
+    window.getDeleteCompany = function(id, name) {
+        // Pastikan ID input di file modal/company/delete.ejs sesuai dengan ini:
+        $("#delete_company_id").val(id);
+        $("#delete_company_name").text(name); // Menampilkan nama di teks konfirmasi
+        
+        // Update Action Form agar mengarah ke route delete yang benar
+        // (Opsional jika pakai window.location di tombol konfirmasi)
+        $("#form_delete_company").attr("action", "/panel/company/delete/" + id);
+
+        // Tampilkan Modal
+        $("#modal_company_delete").modal("show");
+    };
+</script>

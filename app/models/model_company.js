@@ -10,6 +10,17 @@ const getCompany = async () => {
     }
 };
 
+// Ambil 1 data company untuk form Edit
+const getCompanyById = async (id) => {
+    try {
+        const query = `SELECT * FROM ms_company WHERE company_id = ?`;
+        var rows = await mysql.execute(query, [id]);
+        return [rows[0], null];
+    } catch (error) {
+        return [null, error];
+    }
+};
+
 const addCompany = async (data) => {
     try {
         const query = `INSERT INTO ms_company (company_name, company_phone, company_address) VALUES (?, ?, ?)`;
@@ -20,6 +31,17 @@ const addCompany = async (data) => {
         return [null, error];
     }
 };
+
+const updateCompany = async (id, data) => {
+    try {
+        const query = `UPDATE ms_company SET company_name = ?, company_phone = ?, company_address = ? WHERE company_id = ?`;
+        var result = await mysql.execute(query, [data.name, data.phone, data.address, id]);
+        return [result, null];
+    } catch (error) {
+        return [null, error];
+    }
+};
+
 
 const deleteCompany = async (id) => {
     try {
@@ -34,5 +56,7 @@ const deleteCompany = async (id) => {
 module.exports = {
     getCompany,
     addCompany,
-    deleteCompany
+    deleteCompany,
+    getCompanyById,
+    updateCompany
 };

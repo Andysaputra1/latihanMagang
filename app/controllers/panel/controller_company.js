@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const model_company = require("../../models/model_company");
 
+
+// nampilin list company
 router.get('/', async (req, res) => {
     let app_name = process.env.IMAGE_PROJECT_NAME;
     let app_version = process.env.IMAGE_VERSION;
@@ -33,10 +35,11 @@ router.get('/', async (req, res) => {
     }
 });
 
+// buat namabahin data (Post)
 router.post('/add', async (req, res) => {
     try {
         // Proteksi Role: Hanya Admin (Role 2 dan 1)
-        if (req.user.role_id != 2 || req.user.role_id != 1) {
+        if (![1, 2].includes(req.user.role_id)) {
             return res.status(200).json({ status: "FAILED", message: "Akses ditolak!" });
         }
 
@@ -54,9 +57,46 @@ router.post('/add', async (req, res) => {
     }
 });
 
+// 3. Form Edit (Menampilkan data lama ke form)
+router.get('/edit/:id', async (req, res) => {
+    try {
+        if (![1, 2].includes(req.user.role_id)) return res.redirect('/panel/company');
+
+        const [company, err] = await model_company.getCompanyById(req.params.id);
+        if (err || !company) return res.redirect('/panel/company');
+
+        res.render("./panel/company_edit", {
+            user: req.user,
+            sidebar: 'company',
+            title: 'Edit Company',
+            company: company // Data untuk diisi di input value
+        });
+    } catch (error) {
+        res.redirect('/panel/company');
+    }
+});
+
+// 4. Proses Edit (POST)
+router.post('/edit/submit', async (req, res) => {
+    try {
+        if (![1, 2].includes(req.user.role_id)) return res.status(403).send("Forbidden");
+
+        const { company_id, company_name, company_phone, company_address } = req.body;
+        const [ret, err] = await model_company.updateCompany(company_id, {
+            name: company_name, phone: company_phone, address: company_address
+        });
+
+        if (err) throw err;
+        res.redirect('/panel/company');
+    } catch (error) {
+        res.redirect('/panel/company?error=update_failed');
+    }
+});
+
+//proces hapus
 router.get('/delete/:id', async (req, res) => {
     try {
-        if (req.user.role_id != 2 ||  req.user.role_id != 1) return res.status(403).send("Forbidden");
+        if (![1, 2].includes(req.user.role_id)) return res.status(403).send("Forbidden");
         
         const [ret, err] = await model_company.deleteCompany(req.params.id);
         if (err) {

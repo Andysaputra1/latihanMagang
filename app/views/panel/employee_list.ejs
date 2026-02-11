@@ -1,0 +1,304 @@
+<%- include('../partial/panel/header') %>
+<body class="footer-fixed">
+    <%- include('../partial/panel/navbar') %>
+    <%- include('../partial/panel/sidebar') %>
+
+    <style>
+        /* Mencegah kolom turun ke bawah saat transisi */
+        .row-split {
+            display: flex;
+            flex-wrap: nowrap !important;
+            overflow: hidden;
+        }
+
+        /* Transisi halus untuk lebar */
+        .transition-all {
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 0 0 auto;
+        }
+
+        /* Animasi geser yang lebih smooth */
+        .slide-in-right {
+            display: block !important;
+            animation: slideIn 0.5s ease-out forwards;
+        }
+
+        .slide-out-right {
+            animation: slideOut 0.4s ease-in forwards;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(100%); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes slideOut {
+            from { opacity: 1; transform: translateX(0); }
+            to { opacity: 0; transform: translateX(100%); }
+        }
+    </style>
+
+    
+    <%- include('./modal/employee/delete') %>
+
+    <div class="container-fluid body-content">
+        <section class="content dashboard">
+            <div class="page-body">
+                
+                <div class="row flex-nowrap overflow-hidden">
+                    <div class="col-12 transition-all" id="left-panel">
+                        <div class="panel panel-default">
+                            <div class="panel-heading user-management-heading">
+                                <h2 style="display: flex; align-items: center; white-space: nowrap">
+                                    Karyawan <%= company.company_name %>
+                                </h2>
+                                
+                                <div class="d-flex gap-2">
+                                    <a href="/panel/company" class="btn btn-secondary btn-add-table">
+                                        <i class="fas fa-arrow-left"></i> Kembali
+                                    </a>
+                                    <% if ([1, 2].includes(user.role_id)) { %>
+                                    <button type="button" class="btn btn-primary btn-add-table" onclick="openModalAdd()" style="white-space: nowrap;">
+                                        Tambah Karyawan <i class="fas fa-plus"></i>
+                                    </button>
+                                    <% } %>
+                                </div>
+                            </div>
+                            
+                            <div class="panel-body">
+                                <div class="table-class">
+                                    <div class="table-responsive">
+                                        <table id="table-employee" class="table" style="width:100%">
+                                            <thead>
+                                                <tr>
+                                                    <th>Nama</th>
+                                                    <th>Gender</th>
+                                                    <th>Tgl Lahir</th>
+                                                    <th width="15%">Aksi</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <% data.forEach(function(item) { %>
+                                                <tr>
+                                                    <td><strong><%= item.employee_name %></strong></td>
+                                                    <td>
+                                                        <% if(item.employee_gender == 0) { %>
+                                                            <span class="badge bg-primary">Pria</span>
+                                                        <% } else { %>
+                                                            <span class="badge bg-danger">Wanita</span>
+                                                        <% } %>
+                                                    </td>
+                                                    <td><%= item.formatted_birthday %></td>
+                                                    <td>
+                                                        <div style='text-align: center; display: flex; gap: 0.5rem; align-items: center; justify-content: center;'>
+                                                            <a href="javascript:void(0)" class="table-btn btn-view" 
+                                                               data-id="<%= item.employee_id %>" style="color: #17a2b8;" title="View Detail">
+                                                                <i class="fas fa-eye"></i>
+                                                            </a>
+
+                                                            <% if ([1, 2].includes(user.role_id)) { %>
+                                                                <a class='table-btn update-btn' onclick="openModalEdit('<%= item.employee_id %>')" title='Edit'>
+                                                                    <i class='fas fa-pencil-alt'></i>
+                                                                </a>
+                                                                
+                                                                <a class='table-btn delete-btn' onclick="getDeleteEmployee('<%= item.employee_id %>', '<%= item.employee_name %>')" title='Hapus'>
+                                                                    <i class='fas fa-trash-alt'></i>
+                                                                </a>
+                                                            <% } %>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <% }); %>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-xl-4 d-none" id="right-panel">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h3 class="panel-title">Detail Karyawan</h3>
+                                <button type="button" class="btn-link float-end text-dark" onclick="closeSplitView()" style="text-decoration: none; border: none; background: none;">
+                                    <i class="fas fa-times fa-lg"></i>
+                                </button>
+                            </div>
+                            <div class="panel-body text-center">
+                                <img id="view_picture" src="/image/login_ornament.svg" alt="Foto" class="img-fluid rounded-circle mb-3" width="150" height="150" style="object-fit:cover; border: 3px solid #eee;">
+                                
+                                <h4 id="view_name" class="fw-bold">...</h4>
+                                <p id="view_phone" class="text-muted mb-4">...</p>
+
+                                <div class="text-start px-3">
+                                    <div class="mb-2"><strong>Gender:</strong> <span id="view_gender">...</span></div>
+                                    <div class="mb-2"><strong>Ulang Tahun:</strong> <span id="view_birthday">...</span></div>
+                                    <div class="mb-2"><strong>Perusahaan:</strong> <%= company.company_name %></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+    <div class="modal fade" id="modalEmployee" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title pull-left" id="modalTitle">Tambah Karyawan</h2>
+                    <button type="button" class="close button-icon" data-bs-dismiss="modal" aria-label="Close">
+                        <img src="/image/close.svg" alt="Close">
+                    </button>
+                </div>
+                <form id="formEmployee" action="/panel/employee/add" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" name="company_id" value="<%= company.company_id %>">
+                        <input type="hidden" name="employee_id" id="inp_employee_id">
+
+                        <div class="form-group mb-3">
+                            <h6>Nama Lengkap <span class="text-danger">*</span></h6>
+                            <input type="text" name="employee_name" id="inp_name" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <h6>Gender</h6>
+                            <select name="employee_gender" id="inp_gender" class="form-select">
+                                <option value="0">Pria</option>
+                                <option value="1">Wanita</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <h6>Tanggal Lahir <span class="text-danger">*</span></h6>
+                            <input type="date" name="employee_birthday" id="inp_birthday" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <h6>Nomor HP <span class="text-danger">*</span></h6>
+                            <input type="number" name="employee_phone" id="inp_phone" class="form-control" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <h6>Foto Profil</h6>
+                            <input type="file" name="employee_picture" class="form-control" accept="image/*">
+                            <small class="text-muted" id="note_foto" style="display:none">*Biarkan kosong jika tidak ingin mengganti foto</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary btn-add-table">
+                            <i class="fas fa-save"></i> Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partial/panel/footer') %>
+    <%- include('../partial/panel/javascript') %>
+
+    <script>
+        $(document).ready(function() {
+            // DataTables
+            $('#table-employee').DataTable({
+                language: {
+                    searchPlaceholder: '',
+                    paginate: { 'previous': '←', 'next': '→' },
+                    lengthMenu: 'Tampilkan _MENU_ data',
+                    info: "Menampilkan _START_ - _END_ dari _TOTAL_",
+                    infoEmpty: "Menampilkan 0 - 0 dari 0",
+                    search: '<i class="fas fa-search"></i>',
+                    emptyTable: "Data tidak ditemukan",
+                    zeroRecords: "Data yang dicari tidak ditemukan",
+                }
+            });
+
+            // Split View Logic
+            $('.btn-view').click(function() {
+                var empId = $(this).data('id');
+
+                // 1. Kecilkan Panel Kiri Dulu
+                $('#left-panel').removeClass('col-12').addClass('col-xl-8');
+
+                // 2. Tunggu sebentar (300ms) agar panel kiri selesai mengecil, baru munculkan kanan
+                // Ini mencegah panel kanan muncul di bawah karena "rebutan tempat"
+                setTimeout(function() {
+                    $('#right-panel').removeClass('d-none slide-out-right').addClass('slide-in-right');
+                }, 300);
+
+                // 3. Panggil AJAX (Tetap jalan di background)
+                $.ajax({
+                    url: '/panel/employee/api/detail',
+                    method: 'POST',
+                    data: { employee_id: empId },
+                    success: function(response) {
+                        if(response.status == 'SUCCESS') {
+                            var data = response.data;
+                            $('#view_name').text(data.employee_name);
+                            $('#view_phone').text(data.employee_phone);
+                            $('#view_birthday').text(data.view_birthday_format);
+                            $('#view_gender').text(data.employee_gender == 0 ? 'Pria' : 'Wanita');
+                            if(data.employee_picture) {
+                                $('#view_picture').attr('src', '/uploads/' + data.employee_picture);
+                            } else {
+                                $('#view_picture').attr('src', '/image/login_ornament.svg');
+                            }
+                        }
+                    }
+                });
+            });
+        });
+
+        function closeSplitView() {
+            // 1. Animasi keluar panel kanan
+            $('#right-panel').removeClass('slide-in-right').addClass('slide-out-right');
+            
+            // 2. Tunggu animasi selesai, baru sembunyikan kanan & lebarkan kiri
+            setTimeout(function() {
+                $('#right-panel').addClass('d-none'); // Hilangkan panel kanan
+                $('#left-panel').removeClass('col-xl-8').addClass('col-12'); // Lebarkan panel kiri
+            }, 400); // Waktu sesuai durasi animasi slideOut
+        }
+
+        // Modal Add
+        function openModalAdd() {
+            $('#modalTitle').text('Tambah Karyawan');
+            $('#formEmployee').attr('action', '/panel/employee/add');
+            $('#formEmployee')[0].reset();
+            $('#inp_employee_id').val('');
+            $('#note_foto').hide();
+            $('#modalEmployee').modal('show');
+        }
+
+        // Modal Edit
+        function openModalEdit(id) {
+            $.ajax({
+                url: '/panel/employee/api/detail',
+                method: 'POST',
+                data: { employee_id: id },
+                success: function(response) {
+                    if(response.status == 'SUCCESS') {
+                        var data = response.data;
+                        $('#modalTitle').text('Edit Karyawan');
+                        $('#formEmployee').attr('action', '/panel/employee/edit');
+                        $('#inp_employee_id').val(data.employee_id);
+                        $('#inp_name').val(data.employee_name);
+                        $('#inp_gender').val(data.employee_gender);
+                        $('#inp_birthday').val(data.input_birthday_format);
+                        $('#inp_phone').val(data.employee_phone);
+                        $('#note_foto').show();
+                        $('#modalEmployee').modal('show');
+                    }
+                }
+            });
+        }
+
+        // Modal Delete (Fungsi Baru)
+        window.getDeleteEmployee = function(id, name) {
+            $("#delete_employee_id").val(id);
+            $("#delete_employee_name").text(name);
+            $("#form_delete_employee").attr("action", "/panel/employee/delete/" + id);
+            $("#modal_employee_delete").modal("show");
+        };
+    </script>
+</body>

@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/panel/auth/login');
+    }
     let app_name = process.env.IMAGE_PROJECT_NAME;
     let app_version = process.env.IMAGE_VERSION;
 

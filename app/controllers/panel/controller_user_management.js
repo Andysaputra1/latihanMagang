@@ -4,6 +4,9 @@ const model_user = require("../../models/model_user");
 const axios_call = require("../../modules/axios_call");
 
 router.get('/', async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/panel/auth/login');
+    }
     let app_name = process.env.IMAGE_PROJECT_NAME;
     let app_version = process.env.IMAGE_VERSION;
 

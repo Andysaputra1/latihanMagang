@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/panel/auth/login');
+    }
     let greeting = 'Selamat malam';
     let hour = new Date().getHours();
     let timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone; // eg. 'America/Chicago' or 'Asia/Jakarta'

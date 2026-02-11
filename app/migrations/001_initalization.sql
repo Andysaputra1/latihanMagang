@@ -73,8 +73,11 @@ CREATE TABLE IF NOT EXISTS `ms_employee` (
 REPLACE INTO `ms_user` (`nik`, `name`, `email`, `password`, `role_id`, `created_by_nik`, `created_by_name`, `created_at`, `updated_by`, `updated_at`) VALUES
 ('Superadmin', 'Superadmin', '001', '$2a$12$oiyrEHe0j5GrDT/eyEsV0O/lrw929oYMzqtYH83/.EaXihkM5qXyy', 1, 'SYSTEM', 'SYSTEM', NOW(), 'SYSTEM', NOW());
 
-INSERT INTO `ms_user` (`nik`, `name`, `email`, `password`, `role_id`, `created_by_nik`, `created_by_name`, `created_at`, `updated_by`, `updated_at`) VALUES [
-('admin', 'Admin', '002', '$2a$12$oiyrEHe0j5GrDT/eyEsV0O/lrw929oYMzqtYH83/.EaXihkM5qXyy', 2, 'SYSTEM', 'SYSTEM', NOW(), 'SYSTEM', NOW()),
-('member', 'Member', '003', '$2a$12$oiyrEHe0j5GrDT/eyEsV0O/lrw929oYMzqtYH83/.EaXihkM5qXyy', 3, 'SYSTEM', 'SYSTEM', NOW(), 'SYSTEM', NOW()),
-('user', 'User', '004', '$2a$12$oiyrEHe0j5GrDT/eyEsV0O/lrw929oYMzqtYH83/.EaXihkM5qXyy', 4, 'SYSTEM', 'SYSTEM', NOW(), 'SYSTEM', NOW())
-];
+REPLACE INTO `ms_user` (`nik`, `name`, `email`, `password`, `role_id`, `created_by_nik`, `created_by_name`, `created_at`, `updated_by`, `updated_at`) VALUES
+('admin', 'Admin', '002', '$2a$12$oiyrEHe0j5GrDT/eyEsV0O/lrw929oYMzqtYH83/.EaXihkM5qXyy', 2, 'SYSTEM', 'SYSTEM', NOW(), 'SYSTEM', NOW());
+
+REPLACE INTO `ms_user` (`nik`, `name`, `email`, `password`, `role_id`, `created_by_nik`, `created_by_name`, `created_at`, `updated_by`, `updated_at`) VALUES
+('member', 'Member', '003', '$2a$12$oiyrEHe0j5GrDT/eyEsV0O/lrw929oYMzqtYH83/.EaXihkM5qXyy', 3, 'SYSTEM', 'SYSTEM', NOW(), 'SYSTEM', NOW());
+
+REPLACE INTO `ms_user` (`nik`, `name`, `email`, `password`, `role_id`, `created_by_nik`, `created_by_name`, `created_at`, `updated_by`, `updated_at`) VALUES
+('user', 'User', '004', '$2a$12$oiyrEHe0j5GrDT/eyEsV0O/lrw929oYMzqtYH83/.EaXihkM5qXyy', 4, 'SYSTEM', 'SYSTEM', NOW(), 'SYSTEM', NOW());

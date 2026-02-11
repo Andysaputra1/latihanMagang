@@ -5,6 +5,9 @@ const model_company = require("../../models/model_company");
 
 // nampilin list company
 router.get('/', async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/panel/auth/login');
+    }
     let app_name = process.env.IMAGE_PROJECT_NAME;
     let app_version = process.env.IMAGE_VERSION;
 

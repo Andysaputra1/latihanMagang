@@ -237,9 +237,6 @@
                     timeout: 5
                 });
 
-                // Bersihkan parameter error dari URL tanpa reload halaman
-                const cleanUrl = window.location.pathname + "?company_id=" + urlParams.get('company_id');
-                window.history.replaceState({}, document.title, cleanUrl);
             }
 
             if (statusType) {
@@ -255,12 +252,13 @@
                     timeout: 3
                 });
             }
-
+            
+             // Bersihkan parameter error dari URL tanpa reload halaman
             if (errorType || statusType) {
                     const cleanUrl = window.location.pathname + "?company_id=" + urlParams.get('company_id');
                     window.history.replaceState({}, document.title, cleanUrl);
                 }
-                
+
             // 3. Split View Logic
             $('.btn-view').click(function() {
                 var empId = $(this).data('id');

@@ -10,6 +10,17 @@
             </a>
         </li>
 
+        <li class="<% if(sidebar == 'company'){%>active<%} %>">
+            <a class="sidebar-item justify-center" href="/panel/company">
+                <div class="sidebar-active <% if(sidebar == 'company'){%>active<%} %>"></div>
+                <div class="container-icon">
+                    <i class="fas fa-building"></i>
+                </div>
+                <span class="detail-sidebar">Company List</span>
+            </a>
+        </li>
+
+
         <li class="<% if(sidebar == 'user'){%>active<%} %>">
             <a class="sidebar-item justify-center" href="/panel/user">
                 <div class="sidebar-active <% if(sidebar == 'user'){%>active<%} %>"></div>
@@ -20,7 +31,7 @@
             </a>
         </li>
 
-        <li class="<% if(sidebar == 'custom_menu'){%>active<%} %>">
+        <!-- <li class="<% if(sidebar == 'custom_menu'){%>active<%} %>">
             <a class="sidebar-item justify-center" href="/panel/custom_menu">
                 <div class="sidebar-active <% if(sidebar == 'custom_menu'){%>active<%} %>"></div>
                 <div class="container-icon">
@@ -28,7 +39,7 @@
                 </div>
                 <span class="detail-sidebar">Custom Menu</span>
             </a>
-        </li>
+        </li> -->
 
         <li class="<% if(sidebar == 'log'){%>active<%} %>">
             <a class="sidebar-item justify-center" href="/panel/log">
@@ -40,15 +51,7 @@
             </a>
         </li>
 
-        <li class="<% if(sidebar == 'company'){%>active<%} %>">
-            <a class="sidebar-item justify-center" href="/panel/company">
-                <div class="sidebar-active <% if(sidebar == 'company'){%>active<%} %>"></div>
-                <div class="container-icon">
-                    <i class="fas fa-building"></i>
-                </div>
-                <span class="detail-sidebar">Company List</span>
-            </a>
-        </li>
+
 
     </ul>
 </nav>

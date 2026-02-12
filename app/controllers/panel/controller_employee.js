@@ -100,7 +100,7 @@ router.post('/add', (req, res) => {
     const uploadSingle = upload.single('employee_picture');
 
     uploadSingle(req, res, async function (err) {
-        const { company_id } = req.body;
+        const { company_id, employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
 
         // 1. Cek jika ada error dari Multer (File bukan JPG/PNG atau ukuran > 2MB)
         if (err) {
@@ -112,16 +112,29 @@ router.post('/add', (req, res) => {
         }
 
         try {
-            // ... (Lanjutkan logika simpan database kamu yang sudah ada) ...
-            const { employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
+            if (!employee_name || !employee_birthday || !employee_phone) {
+                return res.redirect(`/panel/employee?company_id=${company_id}&error=empty_field`);
+            }
             
             // Validasi isNaN dan future_date yang sudah kita buat tadi tetap di sini
             if (isNaN(employee_phone)) return res.redirect(`/panel/employee?company_id=${company_id}&error=phone_nan`);
 
+            let inputDate = new Date(employee_birthday);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset jam ke 00:00
+
+            if (inputDate > today) {
+                return res.redirect(`/panel/employee?company_id=${company_id}&error=future_date`);
+            }
+
             let picture_name = req.file ? req.file.filename : null;
             await model_employee.addEmployee({
-                company_id, name: employee_name, gender: employee_gender, 
-                birthday: employee_birthday, phone: employee_phone, picture: picture_name
+                company_id, 
+                name: employee_name, 
+                gender: employee_gender, 
+                birthday: employee_birthday, 
+                phone: employee_phone, 
+                picture: picture_name
             });
 
             res.redirect(`/panel/employee?company_id=${company_id}&status=add_success`);
@@ -132,47 +145,60 @@ router.post('/add', (req, res) => {
 });
 
 // 5. Proses Edit Karyawan
-router.post('/edit', upload.single('employee_picture'), async (req, res) => {
-    try {
-        if (![1, 2].includes(req.user.role_id)) return res.send("Forbidden");
+router.post('/edit', (req, res) => {
+    const uploadSingle = upload.single('employee_picture');
 
-        const { employee_id, company_id, employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
-
-        if (isNaN(employee_phone) || employee_phone === "") {
-            return res.redirect(`/panel/employee?company_id=${company_id}&error=phone_nan`);
+    uploadSingle(req, res, async function (err) {
+        const { employee_id, company_id,employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
+        
+        if (err) {
+            let errCode = 'upload_failed';
+                if (err.message === 'LIMIT_FILE_TYPES') errCode = 'invalid_file';
+                if (err.code === 'LIMIT_FILE_SIZE') errCode = 'file_too_large';
+                return res.redirect(`/panel/employee?company_id=${company_id}&error=${errCode}`);
         }
 
-        // 2. Validasi Tanggal Lahir (tidak boleh masa depan)
-        let inputDate = new Date(employee_birthday);
-        let today = new Date();
-        today.setHours(0, 0, 0, 0); // Reset jam ke 00:00
+        try {
+            if (![1, 2].includes(req.user.role_id)) return res.send("Forbidden");
 
-        if (inputDate > today) {
-            return res.redirect(`/panel/employee?company_id=${company_id}&error=future_date`);
-        }
+            const { employee_id, company_id, employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
 
-        // Logika Upload Foto Baru (Hapus yang lama jika ada)
-        let picture_name = null;
-        if (req.file) {
-            picture_name = req.file.filename;
-            let [oldData] = await model_employee.getEmployeeById(employee_id);
-            if (oldData && oldData.employee_picture) {
-                const oldPath = path.join('public/uploads', oldData.employee_picture);
-                if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+            if (isNaN(employee_phone) || employee_phone === "") {
+                return res.redirect(`/panel/employee?company_id=${company_id}&error=phone_nan`);
             }
+
+            // 2. Validasi Tanggal Lahir (tidak boleh masa depan)
+            let inputDate = new Date(employee_birthday);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0); // Reset jam ke 00:00
+
+            if (inputDate > today) {
+                return res.redirect(`/panel/employee?company_id=${company_id}&error=future_date`);
+            }
+
+            // Logika Upload Foto Baru (Hapus yang lama jika ada)
+            let picture_name = null;
+            if (req.file) {
+                picture_name = req.file.filename;
+                let [oldData] = await model_employee.getEmployeeById(employee_id);
+                if (oldData && oldData.employee_picture) {
+                    const oldPath = path.join('public/uploads', oldData.employee_picture);
+                    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+                }
+            }
+
+            // Update Database
+            const [ret, err] = await model_employee.updateEmployee(employee_id, {
+                name: employee_name, gender: employee_gender, 
+                birthday: employee_birthday, phone: employee_phone, picture: picture_name
+            });
+
+            if (err) throw err;
+            res.redirect(`/panel/employee?company_id=${company_id}&status=edit_success`);
+        } catch (error) {
+            res.redirect(`/panel/employee?company_id=${company_id}&error=system_error`);
         }
-
-        // Update Database
-        const [ret, err] = await model_employee.updateEmployee(employee_id, {
-            name: employee_name, gender: employee_gender, 
-            birthday: employee_birthday, phone: employee_phone, picture: picture_name
-        });
-
-        if (err) throw err;
-        res.redirect(`/panel/employee?company_id=${company_id}&status=edit_success`);
-    } catch (error) {
-        res.redirect(`/panel/employee?company_id=${company_id}&error=system_error`);
-    }
+    });
 });
 
 

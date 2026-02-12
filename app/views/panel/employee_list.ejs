@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="/css/bootoast.min.css">
 <%- include('../partial/panel/header') %>
 <body class="footer-fixed">
     <%- include('../partial/panel/navbar') %>
@@ -199,7 +200,7 @@
 
     <script>
         $(document).ready(function() {
-            // DataTables
+            // 1. Inisialisasi DataTable
             $('#table-employee').DataTable({
                 language: {
                     searchPlaceholder: '',
@@ -213,20 +214,61 @@
                 }
             });
 
-            // Split View Logic
+            // 2. LOGIKA TOAST NOTIFIKASI (Mengecek Error dari URL)
+            const urlParams = new URLSearchParams(window.location.search);
+            const errorType = urlParams.get('error');
+            const statusType = urlParams.get('status');
+
+
+            if (errorType) {
+                let errorMessage = "Terjadi kesalahan!";
+                if (errorType === 'phone_nan') errorMessage = "Gagal! Nomor HP harus berupa angka.";
+                if (errorType === 'future_date') errorMessage = "Gagal! Tanggal lahir tidak boleh di masa depan.";
+                if (errorType === 'empty_field') errorMessage = "Gagal! Semua kolom wajib diisi.";
+                if (errorType === 'invalid_file') errorMessage = "Gagal! Format file harus JPG, JPEG, atau PNG.";
+                if (errorType === 'file_too_large') errorMessage = "Gagal! Ukuran file maksimal 2MB.";
+                if (errorType === 'system_error') errorMessage = "Gagal! Terjadi kesalahan pada sistem. Silakan coba lagi.";
+
+                // Panggil Bootoast
+                bootoast.toast({
+                    message: errorMessage,
+                    type: 'danger',
+                    position: 'top-right',
+                    timeout: 5
+                });
+
+                // Bersihkan parameter error dari URL tanpa reload halaman
+                const cleanUrl = window.location.pathname + "?company_id=" + urlParams.get('company_id');
+                window.history.replaceState({}, document.title, cleanUrl);
+            }
+
+            if (statusType) {
+                let successMessage = "Berhasil!";
+                if (statusType === 'add_success') successMessage = "Data karyawan berhasil ditambahkan.";
+                if (statusType === 'edit_success') successMessage = "Data karyawan berhasil diperbarui.";
+                if (statusType === 'delete_success') successMessage = "Data karyawan berhasil dihapus.";
+
+                bootoast.toast({
+                    message: successMessage,
+                    type: 'success',
+                    position: 'top-right',
+                    timeout: 3
+                });
+            }
+
+            if (errorType || statusType) {
+                    const cleanUrl = window.location.pathname + "?company_id=" + urlParams.get('company_id');
+                    window.history.replaceState({}, document.title, cleanUrl);
+                }
+                
+            // 3. Split View Logic
             $('.btn-view').click(function() {
                 var empId = $(this).data('id');
-
-                // 1. Kecilkan Panel Kiri Dulu
                 $('#left-panel').removeClass('col-12').addClass('col-xl-8');
-
-                // 2. Tunggu sebentar (300ms) agar panel kiri selesai mengecil, baru munculkan kanan
-                // Ini mencegah panel kanan muncul di bawah karena "rebutan tempat"
                 setTimeout(function() {
                     $('#right-panel').removeClass('d-none slide-out-right').addClass('slide-in-right');
                 }, 300);
 
-                // 3. Panggil AJAX (Tetap jalan di background)
                 $.ajax({
                     url: '/panel/employee/api/detail',
                     method: 'POST',
@@ -238,30 +280,24 @@
                             $('#view_phone').text(data.employee_phone);
                             $('#view_birthday').text(data.view_birthday_format);
                             $('#view_gender').text(data.employee_gender == 0 ? 'Pria' : 'Wanita');
-                            if(data.employee_picture) {
-                                $('#view_picture').attr('src', '/uploads/' + data.employee_picture);
-                            } else {
-                                $('#view_picture').attr('src', '/image/login_ornament.svg');
-                            }
+                            $('#view_picture').attr('src', data.employee_picture ? '/uploads/' + data.employee_picture : '/image/login_ornament.svg');
                         }
                     }
                 });
             });
         });
 
-        function closeSplitView() {
-            // 1. Animasi keluar panel kanan
+        // --- FUNGSI GLOBAL (DI LUAR document.ready) ---
+
+        window.closeSplitView = function() {
             $('#right-panel').removeClass('slide-in-right').addClass('slide-out-right');
-            
-            // 2. Tunggu animasi selesai, baru sembunyikan kanan & lebarkan kiri
             setTimeout(function() {
-                $('#right-panel').addClass('d-none'); // Hilangkan panel kanan
-                $('#left-panel').removeClass('col-xl-8').addClass('col-12'); // Lebarkan panel kiri
-            }, 400); // Waktu sesuai durasi animasi slideOut
+                $('#right-panel').addClass('d-none');
+                $('#left-panel').removeClass('col-xl-8').addClass('col-12');
+            }, 400);
         }
 
-        // Modal Add
-        function openModalAdd() {
+        window.openModalAdd = function() {
             $('#modalTitle').text('Tambah Karyawan');
             $('#formEmployee').attr('action', '/panel/employee/add');
             $('#formEmployee')[0].reset();
@@ -270,9 +306,7 @@
             $('#modalEmployee').modal('show');
         }
 
-        // Modal Edit
         window.openModalEdit = function(id) {
-            console.log("Membuka Edit ID:", id);
             $.ajax({
                 url: '/panel/employee/api/detail',
                 method: 'POST',
@@ -280,35 +314,25 @@
                 success: function(response) {
                     if(response.status == 'SUCCESS' && response.data) {
                         var data = response.data;
-                        
                         $('#modalTitle').text('Edit Karyawan');
                         $('#formEmployee').attr('action', '/panel/employee/edit');
-                        
-                        // Mengisi value form
                         $('#inp_employee_id').val(data.employee_id);
                         $('#inp_name').val(data.employee_name);
                         $('#inp_gender').val(data.employee_gender);
-                        $('#inp_birthday').val(data.input_birthday_format); // Format YYYY-MM-DD
+                        $('#inp_birthday').val(data.input_birthday_format);
                         $('#inp_phone').val(data.employee_phone);
-                        
                         $('#note_foto').show();
                         $('#modalEmployee').modal('show');
-                    } else {
-                        alert("Data tidak ditemukan!");
                     }
-                },
-                error: function() {
-                    alert("Gagal menyambung ke server. Coba login ulang.");
                 }
             });
         }
 
-        // Modal Delete (Fungsi Baru)
         window.getDeleteEmployee = function(id, name) {
             $("#delete_employee_id").val(id);
             $("#delete_employee_name").text(name);
             $("#form_delete_employee").attr("action", "/panel/employee/delete/" + id);
             $("#modal_employee_delete").modal("show");
         };
-    </script>
+</script>
 </body>

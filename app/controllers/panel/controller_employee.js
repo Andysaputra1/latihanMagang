@@ -96,73 +96,82 @@ router.post('/api/detail', async (req, res) => {
 });
 
 // 3. Proses Tambah Karyawan (Dengan Upload Foto)
-router.post('/add', upload.single('employee_picture'), async (req, res) => {
-    try {
-        // Proteksi Role
-        if (![1, 2].includes(req.user.role_id)) {
-            return res.send("<script>alert('Akses Ditolak'); window.history.back();</script>");
+router.post('/add', (req, res) => {
+    const uploadSingle = upload.single('employee_picture');
+
+    uploadSingle(req, res, async function (err) {
+        const { company_id } = req.body;
+
+        // 1. Cek jika ada error dari Multer (File bukan JPG/PNG atau ukuran > 2MB)
+        if (err) {
+            let errCode = 'upload_failed';
+            if (err.message === 'LIMIT_FILE_TYPES') errCode = 'invalid_file';
+            if (err.code === 'LIMIT_FILE_SIZE') errCode = 'file_too_large';
+
+            return res.redirect(`/panel/employee?company_id=${company_id}&error=${errCode}`);
         }
 
-        const { company_id, employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
-        
-        // Cek apakah ada file foto yg diupload
-        let picture_name = req.file ? req.file.filename : null;
+        try {
+            // ... (Lanjutkan logika simpan database kamu yang sudah ada) ...
+            const { employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
+            
+            // Validasi isNaN dan future_date yang sudah kita buat tadi tetap di sini
+            if (isNaN(employee_phone)) return res.redirect(`/panel/employee?company_id=${company_id}&error=phone_nan`);
 
-        const [ret, err] = await model_employee.addEmployee({
-            company_id: company_id,
-            name: employee_name,
-            gender: employee_gender,
-            birthday: employee_birthday,
-            phone: employee_phone,
-            picture: picture_name
-        });
+            let picture_name = req.file ? req.file.filename : null;
+            await model_employee.addEmployee({
+                company_id, name: employee_name, gender: employee_gender, 
+                birthday: employee_birthday, phone: employee_phone, picture: picture_name
+            });
 
-        if (err) throw err;
-        
-        // Redirect kembali ke list perusahaan itu
-        res.redirect('/panel/employee?company_id=' + company_id);
-    } catch (error) {
-        console.error(error);
-        res.send("<script>alert('Gagal menambah data'); window.history.back();</script>");
-    }
+            res.redirect(`/panel/employee?company_id=${company_id}&status=add_success`);
+        } catch (error) {
+            res.redirect(`/panel/employee?company_id=${company_id}&error=system_error`);
+        }
+    });
 });
 
 // 5. Proses Edit Karyawan
 router.post('/edit', upload.single('employee_picture'), async (req, res) => {
     try {
-        if (![1, 2].includes(req.user.role_id)) {
-            return res.send("<script>alert('Akses Ditolak'); window.history.back();</script>");
-        }
+        if (![1, 2].includes(req.user.role_id)) return res.send("Forbidden");
 
         const { employee_id, company_id, employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
-        
-        // Cek apakah ada foto baru?
+
+        if (isNaN(employee_phone) || employee_phone === "") {
+            return res.redirect(`/panel/employee?company_id=${company_id}&error=phone_nan`);
+        }
+
+        // 2. Validasi Tanggal Lahir (tidak boleh masa depan)
+        let inputDate = new Date(employee_birthday);
+        let today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset jam ke 00:00
+
+        if (inputDate > today) {
+            return res.redirect(`/panel/employee?company_id=${company_id}&error=future_date`);
+        }
+
+        // Logika Upload Foto Baru (Hapus yang lama jika ada)
         let picture_name = null;
         if (req.file) {
             picture_name = req.file.filename;
-            
-            // Hapus foto lama jika ada (Optional, good practice)
-            let [oldData, _] = await model_employee.getEmployeeById(employee_id);
+            let [oldData] = await model_employee.getEmployeeById(employee_id);
             if (oldData && oldData.employee_picture) {
                 const oldPath = path.join('public/uploads', oldData.employee_picture);
                 if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
             }
         }
 
+        // Update Database
         const [ret, err] = await model_employee.updateEmployee(employee_id, {
-            name: employee_name,
-            gender: employee_gender,
-            birthday: employee_birthday,
-            phone: employee_phone,
-            picture: picture_name // Kirim nama file baru (atau null)
+            name: employee_name, gender: employee_gender, 
+            birthday: employee_birthday, phone: employee_phone, picture: picture_name
         });
 
         if (err) throw err;
-        res.redirect('/panel/employee?company_id=' + company_id);
-
+        res.redirect(`/panel/employee?company_id=${company_id}&status=edit_success`);
     } catch (error) {
-        console.error(error);
-        res.send("<script>alert('Gagal update data'); window.history.back();</script>");
+        res.redirect(`/panel/employee?company_id=${company_id}&error=system_error`);
     }
 });
 
@@ -186,7 +195,7 @@ router.get('/delete/:id', async (req, res) => {
             await model_employee.deleteEmployee(req.params.id);
             
             // Balik ke halaman list
-            res.redirect('/panel/employee?company_id=' + emp.company_id);
+            res.redirect(`/panel/employee?company_id=${emp.company_id}&status=delete_success`);
         } else {
             res.redirect('/panel/company');
         }

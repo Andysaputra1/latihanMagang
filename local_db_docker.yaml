@@ -11,6 +11,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./app/migrations:/docker-entrypoint-initdb.d
+      - .:/app
+      - ./public/uploads:/app/public/uploads
     expose:
       - 3306
     ports:

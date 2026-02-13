@@ -164,7 +164,8 @@ $(document).ready(function () {
         ajax: {
             url: "/panel/user_management/list_user",
             data: {
-                role: roleUser
+                role: roleUser,
+                _csrf: '<%= csrfToken %>'
             },
             method: "POST"
         },

@@ -9,6 +9,7 @@
             </div>
             
             <form action="/panel/company/add" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="modal-body">
                     <div class="form-group mb-3">
                         <h6>Nama Perusahaan <span class="text-danger">*</span></h6>

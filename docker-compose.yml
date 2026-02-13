@@ -1,0 +1,49 @@
+version: "3.9"
+
+services:
+  app:
+    container_name: node_app
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      IMAGE_NAME: Template 
+      IMAGE_PROJECT_NAME: Node Template
+      IMAGE_VERSION: 1.0.0
+      IMAGE_ENV: development
+      IMAGE_PORT: 3000
+
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads_data:/public/uploads
+
+  db:
+    image: mysql:8.0.33
+    container_name: db_template
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234567890
+      TZ: Asia/Jakarta
+      MYSQL_USER: template_user
+      MYSQL_PASSWORD: template_1234567890
+      MYSQL_DATABASE: template_db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p1234567890"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - ./app/migrations:/docker-entrypoint-initdb.d
+      - ./public/uploads:/app/public/uploads
+    expose:
+      - 3306
+    ports:
+      - 3310:3306
+
+volumes:
+  mysql_data:
+  migrations_data:
+  uploads_data:

@@ -19,10 +19,10 @@ window.onload = function () {
         if (e.ctrlKey && e.keyCode == 85) {
             disabledEvent(e);
         }
-        // "F12" key
-        if (event.keyCode == 123) {
-            disabledEvent(e);
-        }
+        // // "F12" key
+        // if (event.keyCode == 123) {
+        //     disabledEvent(e);
+        // }
     }, false);
     function disabledEvent(e) {
         if (e.stopPropagation) {

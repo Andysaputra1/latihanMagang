@@ -155,7 +155,9 @@
                         <img src="/image/close.svg" alt="Close">
                     </button>
                 </div>
-                <form id="formEmployee" action="/panel/employee/add" method="POST" enctype="multipart/form-data">
+                <form id="formEmployee" action="/panel/employee/add?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
                     <div class="modal-body">
                         <input type="hidden" name="company_id" value="<%= company.company_id %>">
                         <input type="hidden" name="employee_id" id="inp_employee_id">
@@ -262,15 +264,27 @@
             // 3. Split View Logic
             $('.btn-view').click(function() {
                 var empId = $(this).data('id');
-                $('#left-panel').removeClass('col-12').addClass('col-xl-8');
-                setTimeout(function() {
-                    $('#right-panel').removeClass('d-none slide-out-right').addClass('slide-in-right');
-                }, 300);
+                var isMobile = $(window).width() < 1200; // Cek jika layar HP/Tablet (bootstrap xl breakpoint)
+
+                if (isMobile) {
+                    // MODE MOBILE: Sembunyikan Tabel, Tampilkan Detail Full
+                    $('#left-panel').addClass('d-none'); 
+                    $('#right-panel').removeClass('d-none').addClass('slide-in-right');
+                } else {
+                    // MODE DESKTOP: Animasi Geser Normal
+                    $('#left-panel').removeClass('col-12').addClass('col-xl-8');
+                    setTimeout(function() {
+                        $('#right-panel').removeClass('d-none slide-out-right').addClass('slide-in-right');
+                    }, 300);
+                }
+
+
 
                 $.ajax({
                     url: '/panel/employee/api/detail',
                     method: 'POST',
-                    data: { employee_id: empId },
+                    data: { employee_id: empId,
+                    _csrf: '<%= csrfToken %>'},
                     success: function(response) {
                         if(response.status == 'SUCCESS') {
                             var data = response.data;
@@ -288,16 +302,25 @@
         // --- FUNGSI GLOBAL (DI LUAR document.ready) ---
 
         window.closeSplitView = function() {
-            $('#right-panel').removeClass('slide-in-right').addClass('slide-out-right');
-            setTimeout(function() {
-                $('#right-panel').addClass('d-none');
-                $('#left-panel').removeClass('col-xl-8').addClass('col-12');
-            }, 400);
+            var isMobile = $(window).width() < 1200;
+
+            if (isMobile) {
+                // MODE MOBILE: Sembunyikan Detail, Munculkan Tabel Lagi
+                $('#right-panel').addClass('d-none').removeClass('slide-in-right');
+                $('#left-panel').removeClass('d-none');
+            } else {
+                // MODE DESKTOP: Animasi Geser Keluar Normal
+                $('#right-panel').removeClass('slide-in-right').addClass('slide-out-right');
+                setTimeout(function() {
+                    $('#right-panel').addClass('d-none');
+                    $('#left-panel').removeClass('col-xl-8').addClass('col-12');
+                }, 400);
+            }
         }
 
         window.openModalAdd = function() {
             $('#modalTitle').text('Tambah Karyawan');
-            $('#formEmployee').attr('action', '/panel/employee/add');
+            $('#formEmployee').attr('action', '/panel/employee/add?_csrf=<%= csrfToken %>');
             $('#formEmployee')[0].reset();
             $('#inp_employee_id').val('');
             $('#note_foto').hide();
@@ -308,12 +331,13 @@
             $.ajax({
                 url: '/panel/employee/api/detail',
                 method: 'POST',
-                data: { employee_id: id },
+                data: {employee_id: id,
+                    _csrf: '<%= csrfToken %>' },
                 success: function(response) {
                     if(response.status == 'SUCCESS' && response.data) {
                         var data = response.data;
                         $('#modalTitle').text('Edit Karyawan');
-                        $('#formEmployee').attr('action', '/panel/employee/edit');
+                        $('#formEmployee').attr('action', '/panel/employee/edit?_csrf=<%= csrfToken %>');
                         $('#inp_employee_id').val(data.employee_id);
                         $('#inp_name').val(data.employee_name);
                         $('#inp_gender').val(data.employee_gender);

@@ -99,7 +99,8 @@
         $.ajax({
             url: '/panel/employee/api/detail',
             method: 'POST',
-            data: { employee_id: id },
+            data: {employee_id: id,
+                    _csrf: '<%= csrfToken %>'},
             success: function(response) {
                 if(response.status == 'SUCCESS' && response.data) {
                     var data = response.data;

@@ -112,6 +112,10 @@ router.post('/add', (req, res) => {
         }
 
         try {
+            if (![1, 2].includes(req.user.role_id)) {
+                return res.send("Forbidden");
+            }
+            
             if (!employee_name || !employee_birthday || !employee_phone) {
                 return res.redirect(`/panel/employee?company_id=${company_id}&error=empty_field`);
             }

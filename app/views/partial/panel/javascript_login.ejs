@@ -73,7 +73,8 @@
             $("#error-info-text").html("")
             var data_input = {
                 username: username,
-                password: password
+                password: password,
+                _csrf: $("#csrf_token").val()
             }
             posting({
                 url: '/panel/auth/login/submit',

@@ -9,6 +9,7 @@
             </div>
 
             <form action="/panel/company/edit/submit" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                 <div class="modal-body">
                     <input type="hidden" id="edit_company_id" name="company_id">
 

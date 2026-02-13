@@ -1,7 +1,7 @@
 {
-    "DB_HOST"   : "localhost",
-    "DB_PORT"   : "3310",
-    "DB_USER"   : "root",
-    "DB_PASS"   : "1234567890",
+    "DB_HOST"   : "db",
+    "DB_PORT"   : "3306",
+    "DB_USER"   : "template_user",
+    "DB_PASS"   : "template_1234567890",
     "DATABASE"  : "template_db"
 }

@@ -18,7 +18,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - uploads_data:/public/uploads
+      - ./public/uploads:/app/public/uploads
 
   db:
     image: mysql:8.0.33
@@ -37,7 +37,7 @@ services:
       retries: 20
     volumes:
       - ./app/migrations:/docker-entrypoint-initdb.d
-      - ./public/uploads:/app/public/uploads
+      - mysql_data:/var/lib/mysql
     expose:
       - 3306
     ports:

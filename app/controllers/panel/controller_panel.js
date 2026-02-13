@@ -124,7 +124,7 @@ router.get('/auth/logout', async (req, res) => {
               return err;
             }
         });      
-        res.redirect('/panel/auth/login');
+        res.redirect('/panel/dashboard');
     });
 });
 

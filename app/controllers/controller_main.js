@@ -11,7 +11,7 @@ const c_panel = require('./panel/controller_panel');
 router.get("/", async function(req, res){
     // You can redirect to the main page or any other page
     // For example, redirecting to the Polytron homepage
-    res.redirect("panel/auth/login");
+    res.redirect("panel/dashboard");
 })
 
 router.get('/app_status', async (req, res) => {

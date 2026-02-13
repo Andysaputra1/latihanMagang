@@ -83,6 +83,7 @@ var init = function () {
                     await axios_call
                     .validate_user("post", sentData, null, "application/json", validateUserTimeOut)
                     .then(async (resp) => {
+                        console.log(resp.error)
                         if (resp.error == 0) {
                             let access_token = credential.generateAccessToken({
                                 app_user: username

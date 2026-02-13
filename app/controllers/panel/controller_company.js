@@ -5,9 +5,21 @@ const model_company = require("../../models/model_company");
 
 // nampilin list company
 router.get('/', async (req, res) => {
-    if (!req.user) {
-        return res.redirect('/panel/auth/login');
+
+    let user = req.user;
+    
+    if (!user) {
+        // Jika belum login, buat data Tamu agar tidak Error di Navbar/Sidebar
+        user = {
+            id: 0,
+            name: "Tamu",
+            nik: "-",
+            role_id: 99,        // ID Khusus Tamu
+            role: "Pengunjung", // Nama Role untuk Navbar
+            role_name: "Pengunjung"
+        };
     }
+
     let app_name = process.env.IMAGE_PROJECT_NAME;
     let app_version = process.env.IMAGE_VERSION;
 
@@ -18,7 +30,7 @@ router.get('/', async (req, res) => {
         let result = {
             app_name: app_name,
             title: app_name + ' - Company List',
-            user: req.user, 
+            user: user, 
             sidebar: 'company', 
             applicationVersion: app_version,
             version: app_version,

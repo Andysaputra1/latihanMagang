@@ -2,8 +2,19 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
+
+    let user = req.user;
+    let isLoggenedIn = req.isAuthenticated && req.isAuthenticated();
+
     if (!req.user) {
-        return res.redirect('/panel/auth/login');
+        user = {
+            id: 0,
+            name: 'Guest',
+            nik: "-",
+            role_id: 99,
+            role: 'Guest',
+            role_name: "Guest"
+        };
     }
     let greeting = 'Selamat malam';
     let hour = new Date().getHours();
@@ -21,7 +32,7 @@ router.get('/', async (req, res) => {
     let result = {
         app_name: app_name,
         title: app_name + ' - Dashboard',
-        user: req.user,
+        user: user,
         sidebar: 'dashboard',
         applicationVersion: app_version,
         version: app_version,

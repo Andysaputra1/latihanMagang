@@ -5,20 +5,17 @@
     <%- include('../partial/panel/sidebar') %>
 
     <style>
-        /* Mencegah kolom turun ke bawah saat transisi */
         .row-split {
             display: flex;
             flex-wrap: nowrap !important;
             overflow: hidden;
         }
 
-        /* Transisi halus untuk lebar */
         .transition-all {
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             flex: 0 0 auto;
         }
 
-        /* Animasi geser yang lebih smooth */
         .slide-in-right {
             display: block !important;
             animation: slideIn 0.5s ease-out forwards;
@@ -202,7 +199,7 @@
 
     <script>
         $(document).ready(function() {
-            // 1. Inisialisasi DataTable
+            // Inisialisasi DataTable
             $('#table-employee').DataTable({
                 language: {
                     searchPlaceholder: '',
@@ -216,7 +213,7 @@
                 }
             });
 
-            // 2. LOGIKA TOAST NOTIFIKASI (Mengecek Error dari URL)
+            // Bootoast  (Mengecek Error dari URL)
             const urlParams = new URLSearchParams(window.location.search);
             const errorType = urlParams.get('error');
             const statusType = urlParams.get('status');
@@ -255,23 +252,22 @@
                 });
             }
             
-             // Bersihkan parameter error dari URL tanpa reload halaman
+             // membersihkan parameter error dari URL tanpa reload halaman
             if (errorType || statusType) {
                     const cleanUrl = window.location.pathname + "?company_id=" + urlParams.get('company_id');
                     window.history.replaceState({}, document.title, cleanUrl);
                 }
 
-            // 3. Split View Logic
+            // Split View Logic
             $('.btn-view').click(function() {
                 var empId = $(this).data('id');
-                var isMobile = $(window).width() < 1200; // Cek jika layar HP/Tablet (bootstrap xl breakpoint)
-
+                var isMobile = $(window).width() < 1200; 
                 if (isMobile) {
-                    // MODE MOBILE: Sembunyikan Tabel, Tampilkan Detail Full
+                    // mode mobile
                     $('#left-panel').addClass('d-none'); 
                     $('#right-panel').removeClass('d-none').addClass('slide-in-right');
                 } else {
-                    // MODE DESKTOP: Animasi Geser Normal
+                    // mode desktop
                     $('#left-panel').removeClass('col-12').addClass('col-xl-8');
                     setTimeout(function() {
                         $('#right-panel').removeClass('d-none slide-out-right').addClass('slide-in-right');
@@ -299,17 +295,16 @@
             });
         });
 
-        // --- FUNGSI GLOBAL (DI LUAR document.ready) ---
 
         window.closeSplitView = function() {
             var isMobile = $(window).width() < 1200;
 
             if (isMobile) {
-                // MODE MOBILE: Sembunyikan Detail, Munculkan Tabel Lagi
+                // mode mobile, Sembunyikan Detail, Munculkan Tabel 
                 $('#right-panel').addClass('d-none').removeClass('slide-in-right');
                 $('#left-panel').removeClass('d-none');
             } else {
-                // MODE DESKTOP: Animasi Geser Keluar Normal
+                // mode desktop: Animasi Geser Keluar Normal
                 $('#right-panel').removeClass('slide-in-right').addClass('slide-out-right');
                 setTimeout(function() {
                     $('#right-panel').addClass('d-none');

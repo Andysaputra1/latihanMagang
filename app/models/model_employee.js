@@ -1,10 +1,8 @@
 const mysql = require('../modules/mysql_connector');
 
-// 1. Ambil semua karyawan berdasarkan ID Perusahaan
+//  Ambil semua karyawan berdasarkan ID Perusahaan
 const getEmployeeByCompany = async (company_id) => {
     try {
-        // Kita format tanggal lahir jadi 'DD-MM-YYYY' langsung dari SQL
-        // Dan kita join ke tabel company untuk dapat nama perusahaannya (opsional, buat judul)
         const query = `
             SELECT 
                 emp.*, 
@@ -22,10 +20,9 @@ const getEmployeeByCompany = async (company_id) => {
     }
 };
 
-// 2. Ambil Detail 1 Karyawan (Untuk AJAX Profil & Edit)
+// Ambil Detail 1 Karyawan (Untuk AJAX Profil & Edit)
 const getEmployeeById = async (employee_id) => {
     try {
-        // Ambil format YYYY-MM-DD juga untuk value input form edit (type="date")
         const query = `
             SELECT 
                 *,
@@ -55,7 +52,7 @@ const addEmployee = async (data) => {
             data.gender, 
             data.birthday, 
             data.phone, 
-            data.picture // Nama file gambar (misal: '123123.jpg')
+            data.picture 
         ];
         var [result, fields] = await mysql.executeAsync(query, params);
         return [result, null];
@@ -75,10 +72,9 @@ const deleteEmployee = async (id) => {
     }
 };
 
-// 5. Update Karyawan (Nanti untuk fitur Edit)
+// 5. Update Karyawan (guna untuk fitur Edit)
 const updateEmployee = async (id, data) => {
     try {
-        // Logika dinamis: Kalau user tidak upload foto baru, jangan update kolom picture
         let query = "";
         let params = [];
 

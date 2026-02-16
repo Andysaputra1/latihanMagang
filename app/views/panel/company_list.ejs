@@ -71,7 +71,7 @@
 
 <script>
     $(document).ready(function () {
-        // 1. Inisialisasi DataTable (Desain Standar Polytron)
+        // Inisialisasi DataTable 
         $('#data_table_company').DataTable({
             language: {
                 searchPlaceholder: '',
@@ -88,7 +88,7 @@
             order: [[0, 'asc']]
         });
 
-        // 2. Reset Modal Tambah saat ditutup
+        // Reset Modal Tambah saat ditutup
         $("#modal_company_add").on("hidden.bs.modal", function () {
             $(this).find('form').trigger('reset');
         });
@@ -112,7 +112,7 @@
                     $('#inp_employee_id').val(data.employee_id);
                     $('#inp_name').val(data.employee_name);
                     $('#inp_gender').val(data.employee_gender);
-                    $('#inp_birthday').val(data.input_birthday_format); // Format YYYY-MM-DD
+                    $('#inp_birthday').val(data.input_birthday_format); 
                     $('#inp_phone').val(data.employee_phone);
                     
                     $('#note_foto').show();
@@ -127,9 +127,8 @@
         });
     }
 
-    // 3. Fungsi Isi Data ke Modal Edit
+    //  Fungsi Isi Data ke Modal Edit
     window.getEditCompany = function(id, name, phone, address) {
-        // Pastikan ID input di file modal/company/edit.ejs sesuai dengan ini:
         $("#edit_company_id").val(id);
         $("#edit_company_name").val(name);
         $("#edit_company_phone").val(phone);
@@ -139,14 +138,12 @@
         $("#modal_company_edit").modal("show");
     };
 
-    // 4. Fungsi Isi Data ke Modal Delete
+    //  Fungsi Isi Data ke Modal Delete
     window.getDeleteCompany = function(id, name) {
-        // Pastikan ID input di file modal/company/delete.ejs sesuai dengan ini:
         $("#delete_company_id").val(id);
-        $("#delete_company_name").text(name); // Menampilkan nama di teks konfirmasi
+        $("#delete_company_name").text(name); 
         
         // Update Action Form agar mengarah ke route delete yang benar
-        // (Opsional jika pakai window.location di tombol konfirmasi)
         $("#form_delete_company").attr("action", "/panel/company/delete/" + id);
 
         // Tampilkan Modal

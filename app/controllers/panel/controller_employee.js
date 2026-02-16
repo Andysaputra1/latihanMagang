@@ -6,7 +6,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// --- KONFIGURASI UPLOAD FOTO (MULTER) ---
+//  konfigurasi Multer untuk upload gambar karyawan dengan multi-part form data. Kita simpan di folder 'public/uploads' dengan nama file unik (timestamp + nama asli)
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         // Pastikan folder public/uploads ada
@@ -37,8 +37,8 @@ const upload = multer({
     fileFilter: fileFilter
 });
 
-// --- ROUTES ---
 
+//routes
 // 1. Menampilkan Daftar Karyawan (Berdasarkan Company ID)
 router.get('/', async (req, res) => {
     if (!req.user) {
@@ -66,7 +66,7 @@ router.get('/', async (req, res) => {
             app_name: app_name,
             title: app_name + ' - Employee List',
             user: req.user, 
-            sidebar: 'company', // Sidebar tetap nyala di menu Company
+            sidebar: 'company',
             applicationVersion: app_version,
             version: app_version,
             encryptedUser: 'encryptedUser',
@@ -79,8 +79,7 @@ router.get('/', async (req, res) => {
     }
 });
 
-// 2. API Detail Karyawan (Khusus AJAX Split View)
-// Ini dipanggil oleh Javascript saat tombol "View" diklik
+//  API unutk detail karyawan (AJAX Split View)
 router.post('/api/detail', async (req, res) => {
     try {
         let employee_id = req.body.employee_id;
@@ -88,21 +87,21 @@ router.post('/api/detail', async (req, res) => {
         
         if (err) return res.json({ status: "ERROR", message: err.message });
         
-        // Kirim data JSON mentah ke browser
+        
         res.json({ status: "SUCCESS", data: employee });
     } catch (error) {
         res.json({ status: "ERROR", message: "Terjadi kesalahan server" });
     }
 });
 
-// 3. Proses Tambah Karyawan (Dengan Upload Foto)
+//proses Tambah Karyawan plus dengan upload foto
 router.post('/add', (req, res) => {
     const uploadSingle = upload.single('employee_picture');
 
     uploadSingle(req, res, async function (err) {
         const { company_id, employee_name, employee_gender, employee_birthday, employee_phone } = req.body;
 
-        // 1. Cek jika ada error dari Multer (File bukan JPG/PNG atau ukuran > 2MB)
+        // validasi ada error dari Multer ( speerti : File bukan JPG/PNG atau ukuran > 2MB)
         if (err) {
             let errCode = 'upload_failed';
             if (err.message === 'LIMIT_FILE_TYPES') errCode = 'invalid_file';
@@ -120,12 +119,12 @@ router.post('/add', (req, res) => {
                 return res.redirect(`/panel/employee?company_id=${company_id}&error=empty_field`);
             }
             
-            // Validasi isNaN dan future_date yang sudah kita buat tadi tetap di sini
+            // Validasi isNaN dan future_date
             if (isNaN(employee_phone)) return res.redirect(`/panel/employee?company_id=${company_id}&error=phone_nan`);
 
             let inputDate = new Date(employee_birthday);
             let today = new Date();
-            today.setHours(0, 0, 0, 0); // Reset jam ke 00:00
+            today.setHours(0, 0, 0, 0); 
 
             if (inputDate > today) {
                 return res.redirect(`/panel/employee?company_id=${company_id}&error=future_date`);
@@ -148,7 +147,7 @@ router.post('/add', (req, res) => {
     });
 });
 
-// 5. Proses Edit Karyawan
+// Edit Karyawan
 router.post('/edit', (req, res) => {
     const uploadSingle = upload.single('employee_picture');
 
@@ -171,16 +170,16 @@ router.post('/edit', (req, res) => {
                 return res.redirect(`/panel/employee?company_id=${company_id}&error=phone_nan`);
             }
 
-            // 2. Validasi Tanggal Lahir (tidak boleh masa depan)
+            // 2. Validasi Tanggal Lahir 
             let inputDate = new Date(employee_birthday);
             let today = new Date();
-            today.setHours(0, 0, 0, 0); // Reset jam ke 00:00
+            today.setHours(0, 0, 0, 0); 
 
             if (inputDate > today) {
                 return res.redirect(`/panel/employee?company_id=${company_id}&error=future_date`);
             }
 
-            // Logika Upload Foto Baru (Hapus yang lama jika ada)
+            //  Upload Foto Baru (Hapus yang lama jika ada)
             let picture_name = null;
             if (req.file) {
                 picture_name = req.file.filename;
@@ -206,12 +205,12 @@ router.post('/edit', (req, res) => {
 });
 
 
-// 4. Proses Hapus Karyawan
+//  Hapus Karyawan
 router.get('/delete/:id', async (req, res) => {
     try {
         if (![1, 2].includes(req.user.role_id)) return res.send("Forbidden");
 
-        // Ambil data dulu untuk tahu company_id nya (buat redirect) & nama fotonya (buat hapus file)
+        // Ambil data dulu untuk tahu company_id nya dan nama fotonya 
         let [emp, err1] = await model_employee.getEmployeeById(req.params.id);
         
         if (emp) {

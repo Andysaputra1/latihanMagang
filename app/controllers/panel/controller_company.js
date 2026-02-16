@@ -9,12 +9,12 @@ router.get('/', async (req, res) => {
     let user = req.user;
     
     if (!user) {
-        // Jika belum login, buat data Tamu agar tidak Error di Navbar/Sidebar
+        // Jika belum login, buat data Guest agar tidak Error di Navbar/Sidebar
         user = {
             id: 0,
             name: "Tamu",
             nik: "-",
-            role_id: 99,        // ID Khusus Tamu
+            role_id: 99,        // ID Khusus Guest
             role: "Pengunjung", // Nama Role untuk Navbar
             role_name: "Pengunjung"
         };
